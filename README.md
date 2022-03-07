@@ -1,0 +1,3 @@
+# standardgalactic.github.io
+
+README
