@@ -1,0 +1,112 @@
+  body { background:white;
+         color:black;
+         font-size:15px;
+         font-family:calibri, arial narrow, arial, sans-serif;
+  }
+  table { font-size:inherit; color:inherit; background:inherit }
+  dl.wrapper dd { margin:0 } /* For suppressing spacing above ul/ol */
+
+  .clear { clear:both; display:block; position:relative; text-align:left }
+
+  blockquote.floated { position: relative; left: 2em; padding-right: 4em; }
+  ul.floated { list-style: outside disc;  margin-left: 1em; }
+  ul.floated li { position: relative; left: 1em; padding-right: 1em;}
+
+  button a { text-decoration:none; font-weight:bold }
+  button.this a { font-weight:normal;  }
+
+  .boton { background: #eeeeee; border: 1px solid; white-space:nowrap;
+        font-family:sans-serif; font-size:11pt; border-color: grey;
+        padding:0 4px 0 4px; margin:0; }
+  .boton a:link { color:purple; text-decoration:none }
+  .boton a:visited { color:purple; text-decoration:none }
+  .boton a:hover { color:fuchsia; text-decoration:none; }
+  .boton a:active { color:fuchsia; text-decoration:none }
+
+  div.photocredit { margin:-6px 0 10px 0; font-size:80%; }
+  span.boton:hover { background:mistyrose }
+
+  table.compact { border-collapse:collapse }
+  table.compact th { text-align:left; background:#eeeeee }
+  table.compact td,th { padding:0 4px 0 8px; border:1px solid grey }
+
+  table.inset { 
+    display:inline-table;
+    float:left;
+    margin:6px 14px 4px 0;
+    border-bottom:1px solid grey
+  }
+  table.inset td { font-size:13px; padding:0; }
+  table.inset td img { height:140px }
+  table.inset.right { display:inline; float:right; margin:0 0 4px 10px }
+
+  table.footnote {
+    display:block;
+    width:80%;
+    text-align:left;
+    border-top:1px solid black;
+    margin-top:10px;
+  }
+  table.footnote td { font-size:82%; padding-left:10px; vertical-align:top; }
+  table.footnote td:nth-child(1) {
+    text-align:right; font-size:18px; font-weight:normal; padding:0; 
+  }
+  .menuflex a { text-decoration:none }
+  .menuflex a:link { color:darkmagenta  }
+  .menuflex a:visited { color:darkmagenta }
+  .menuflex a:hover { color:indigo;
+     text-decoration:underline
+  }
+  .menuflex a:active { color:black }
+
+  ul.narrow li { margin-left:-1.5em }
+  ol.narrow li { margin-left:-1.5em }
+
+  table { font-size:inherit; color:inherit; background:inherit }
+  table { border-collapse: collapse; border-spacing: 0; }
+
+  .aleida { display:none }
+
+/* This would be nav instead of div in HTML 5 */
+
+div.menuflex {
+   background:#eeeeee;
+   border-top: 1px solid mediumorchid;
+   border-bottom: 1px solid mediumorchid;
+   width: 100%;
+   font-family:calibri, arial narrow, arial, sans-serif, times;
+   font-size:13px;
+   display: table;
+   table-layout: fixed;
+}
+div.menuflex ul {
+   margin: 0;
+   padding: 0;
+}
+div.menuflex ul li {
+   background-color: #eeeeee;
+   list-style: none;
+   text-align: center;
+   text-decoration: none;
+   color: darkmagenta;
+   padding: 2px 0 2px 0;
+   border-right: 1px solid plum;
+}
+div.menuflex ul li.this {
+   color:black;
+   background-color: #e0e0e0;
+}
+
+div.menuflex ul li:hover { background-color:thistle }
+
+div.menuflex ul {
+   line-height:1.1;
+   display: table-row;
+}
+div.menuflex ul li {
+   display: table-cell;
+}
+div.menuflex.bottom {
+   border-bottom:0;
+}
+

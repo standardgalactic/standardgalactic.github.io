@@ -1,0 +1,336 @@
+  body {
+    background:white;
+    color:black;
+    font-size:15px;
+    font-family:calibri, arial narrow, arial, sans-serif;
+  }
+  h1,h2,h3,h4 {
+    white-space:normal; 
+    clear:both;
+    display:block;
+    position:relative;
+    text-align:left
+  }
+  table { font-size:inherit; color:inherit; background:inherit }
+  table.compact { border-collapse:collapse }
+  table.compact th { text-align:left; background:#eeeeee }
+  table.compact td,th { padding:0 4px 0 8px; border:1px solid grey }
+
+  table.photo { width:100%; font-size:84%; font-style:italic; line-height:0.8 }
+  table.photo td { margin:0; padding:0 }
+  table.photo img { width:100%; border:1px solid grey }
+
+  img.border { border:1px solid grey }
+  div.photocredit { margin:-6px 0 10px 0; font-size:80%; }
+
+  div.row  {
+    display:flex; align-items: flex-start;
+    flex-direction:row; flex-wrap:nowrap; object-fit:contain
+  }
+  div.row figure img { width:100%; height:auto }
+
+  table.footnote {
+    display:block;
+    width:80%;
+    text-align:left;
+    border-top:1px solid black;
+    margin-top:10px;
+  }
+  table.footnote td { font-size:82%; padding-left:10px; vertical-align:top; }
+  table.footnote td:nth-child(1) {
+    text-align:right; font-size:18px; font-weight:normal; padding:0; 
+  }
+  table.numbered {
+      counter-reset: rowNumber;
+  }
+  table.numbered tr td {
+      white-space:nowrap;
+  }
+  table.numbered tr td:first-child::before {
+      counter-increment: rowNumber;
+      content: counter(rowNumber) ". ";
+      display:inline-block; text-align:right; width:24px; margin-right: 0.5em;
+  }
+  table.translations a { text-decoration:none }
+  table.translations td { vertical-align:top }
+
+  div.languages { overflow-x: auto }
+
+  my-tt { font-family:monospace; font-size:88% }
+  my-big { font-size:110% }
+  my-small { font-size:90% }
+
+  tt,pre { font-size:12px }
+  dl.wrapper dd { margin:0 } /* For suppressing spacing above ul/ol */
+ 
+  ul.nospaceabove,ol.nospaceabove { margin:0; padding:0; display:inline }
+  ul.nospaceabove,ol.nospaceabove li { margin-top:0; padding-top:0 }
+
+  a:link { color:blue }
+  a:visited { color:darkmagenta }
+  a:hover { color:fuchsia }
+  a:active { color:fuchsia }
+
+  address { margin:0 10px 6px 12px }
+
+  table.address { 
+    width:100%;
+    margin:0 0 10px 0;
+    clear:both;
+    display:block;
+    position:relative;
+    border-top:1px solid grey;
+    border-bottom:1px solid grey;
+  }
+  table.address td { 
+    width:100vh;
+    font-size:86%;
+    vertical-align:top;
+    text-align:center;
+  }
+  table.address td:first-child {
+    text-align:left;
+    padding-left:12px;
+  }
+  table.address td:last-child {
+    text-align:right; padding-right:12px;
+  }
+  .nowrap { white-space:nowrap }
+  .nobreak { white-space:nowrap }
+  .nofill { white-space:nowrap }
+
+  .button { background: #eeeeee; border: 2px solid grey; border-style:outset;
+        font-family:sans-serif; font-size:12px; white-space:nowrap;
+        padding:0; margin:0; padding-left:4px; padding-right:4px;
+        font-weight:bold }
+  .button a:link { color:purple; text-decoration:none }
+  .button a:visited { color:purple; text-decoration:none }
+  .button a:hover { color:fuchsia; text-decoration:underline; }
+  .button a:active { color:fuchsia; text-decoration:underline }
+  span.button:hover { background:mistyrose }
+
+  .boton { background:#eeeeee; border:1px solid grey; border-style:outset;
+        font-family:sans-serif; font-size:13px; white-space:nowrap;
+        font-weight:bold; margin:0; padding:0 4px 2px 4px; }
+  .boton a:link { color:purple; text-decoration:none }
+  .boton a:visited { color:purple; text-decoration:none }
+  .boton a:hover { color:fuchsia; text-decoration:underline; }
+  .boton a:active { color:fuchsia; text-decoration:underline }
+  span.boton { margin-right:6px }
+  span.boton:hover { background:mistyrose }
+  td.boton:hover { background:mistyrose }
+
+  link-button  { display:inline-block; background:#eeeeee;
+    border:1px solid grey; border-radius:4px; white-space:nowrap; 
+    font-family:sans-serif; font-size:12.5px; font-weight:bold; 
+    padding:0 6px 0 6px; margin:8px 6px 0 0 }
+  link-button a:link { color:purple; text-decoration:none }
+  link-button a:visited { color:purple; text-decoration:none }
+  link-button a:hover { color:fuchsia; text-decoration:underline; }
+  link-button a:active { color:fuchsia; text-decoration:underline }
+
+  .defunct { text-decoration-line:line-through; }
+
+  div.boton { line-height:1.4; text-align:center; margin-top:8px }
+  div.languagebuttons { line-height:1.4; text-align:center; margin-top:8px }
+  div.buttonrow { line-height:2.0 }
+
+  div.banner {
+     cursor:pointer;
+     float:right;
+     font-size:20px;
+     margin:0 10px 4px 0;
+     font-family:times
+  }
+  .menuflex a { text-decoration:none }
+  .menuflex a:link { color:darkmagenta  }
+  .menuflex a:visited { color:darkmagenta }
+  .menuflex a:hover { color:indigo; font-variant:small-caps }
+  .menuflex a:active { color:black }
+
+  div.menuflex {
+     background:#eeeeee;
+     border-top: 1px solid mediumorchid;
+     border-bottom: 1px solid mediumorchid;
+     width: 100%;
+     font-family:calibri, arial narrow, arial, sans-serif, times;
+     font-size:13px;
+     display: table;
+     table-layout: fixed;
+  }
+  div.menuflex ul {
+     margin: 0;
+     padding: 0;
+  }
+  div.menuflex ul li {
+     background-color: #eeeeee;
+     list-style: none;
+     text-align: center;
+     text-decoration: none;
+     font-size:13px;
+     color: darkmagenta;
+     padding: 2px 0 2px 0;
+     border-right: 1px solid plum;
+  }
+  div.menuflex ul li.this {
+     color:black;
+     background-color: #e0e0e0;
+  }
+  div.menuflex ul li:hover { background-color:thistle }
+
+  div.menuflex ul {
+     line-height:1.1;
+     display: table-row;
+  }
+  div.menuflex ul li {
+     display: table-cell;
+  }
+  div.menuflex.bottom {
+     border-bottom:0;
+  }
+  ol.floated { list-style: outside disc;  margin-left: 1em; }
+  ul.floated { list-style: outside disc;  margin-left: 1em; }
+  ol.floated li { position: relative; left: 1em; padding-right: 1em;  }
+  ul.floated li { position: relative; left: 1em; padding-right: 1em;  }
+
+  ul.narrow li { margin-left:-1.5em }
+  ol.narrow li { margin-left:-1.5em }
+
+   hr.thin { height:1px; border:none; background-color:darkgrey }
+
+  .clear { clear:both; display:block; position:relative; text-align:left }
+
+/* This would be nav instead of div in HTML 5 */
+
+  .nowrap { white-space:nowrap }
+  .nobreak { white-space:nowrap }
+
+div.menuflex {
+   background:#eeeeee;
+   border-top: 1px solid mediumorchid;
+   border-bottom: 1px solid mediumorchid;
+   width: 100%;
+   font-family:calibri, arial narrow, arial, sans-serif, times;
+   font-size:13px;
+   display: table;
+   table-layout: fixed;
+}
+div.menuflex ul {
+   margin: 0;
+   padding: 0;
+}
+div.menuflex ul li {
+   background-color: #eeeeee;
+   list-style: none;
+   text-align: center;
+   text-decoration: none;
+   color: darkmagenta;
+   padding: 2px 0 2px 0;
+   border-right: 1px solid plum;
+}
+div.menuflex ul li.this {
+   color:black;
+   background-color: #e0e0e0;
+}
+
+div.menuflex ul li:hover { background-color:thistle }
+
+div.menuflex ul {
+   line-height:1.1;
+   display: table-row;
+}
+div.menuflex ul li {
+   display: table-cell;
+}
+div.menuflex.bottom {
+   border-bottom:0;
+}
+table { font-size:inherit; }
+
+/* Image on the left with text to its right */
+
+table.leftimage {
+  border-spacing:0; border-collapse:collapse;
+  display:inline; width:50%; float:left; margin:0 12px 4px 0;
+}
+table.leftimage td img { width:100%; border:1px solid grey }
+table.leftimage td:first-child { margin-bottom:-8px }
+table.leftimage td:nth-child(1) { font-size:84%; margin-top:-8px }
+table.leftimage td.uline { border-bottom:1px solid grey }
+
+figure {
+   display:inline-block; float:left; margin:0 16px 4px 0; 
+}
+figure.right {
+   float:right; margin:0 0 4px 10px;
+}
+figure img {
+   height:140px; width:auto; border:1px solid grey;
+}
+figure.fullpage {
+  display: table;
+  height: 100%;
+}
+figure.fullpage img {
+  max-height: 80vh;
+  max-width: 100%;
+}
+figcaption {
+    display: table-caption;
+    caption-side: bottom;
+    text-align: left;
+    font-size: 13px;
+    width:100%;
+    border: 0;
+    border-bottom: 1px solid grey;
+}
+
+/*
+  For floating insets - figures with short captions at the bottom.
+  Can go on the left or the right.  These predate the HTML5 figure tag.
+*/
+table.inset {
+  display:inline-table;
+  float:left;
+  margin:6px 14px 4px 0;
+  border-bottom:1px solid grey
+}
+table.inset td { font-size:13px; padding:0; }
+table.inset td img { height:140px; border:1px solid grey }
+table.inset.right { display:inline; float:right; margin:0 0 4px 10px }
+
+/*
+  This is an improvement on 'inset', allowing longer captions that wrap to the
+  width of the image.  The HTML5 figcaption does this itself.
+*/
+div.imagecaption {
+    padding: 3px;
+    margin:6px 14px 4px 0;
+    float: left;
+    border: 0;
+}
+div.imagecaption.right {
+    float:right;
+    margin:0 0 4px 10px;
+}
+div.references {
+   margin-top:22px; margin-bottom:0; padding-bottom:0;
+   font-size:110%; font-style:italic; border-top:1px dotted grey;
+   clear:both; display:block; position:relative; text-align:left
+}
+div.references ul,ol { margin-top:10px; }
+div.references ul,ol li {
+   margin: 0 4% 6px 0; font-style:normal; font-size:14px;
+}
+div.references ul,ol li:first-child {
+   margin-top:6px;
+}
+
+@media screen and (max-width: 380px) {
+   div.banner { float:left; font-size:16px }
+   blockquote { margin-left:1em; margin-right:1em; }
+   pre { font-size:10px }
+}
+@media screen and (max-width: 320px) {
+   div.banner { float:left; font-size:15px }
+}
