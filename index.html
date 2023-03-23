@@ -71,6 +71,10 @@
 			var rightPressed = false;
 			var qPressed = false;
 			var rPressed = false;
+			var spaceship = {
+				x: canvas.width / 2,
+				y: canvas.height / 2
+			};
 
 			document.addEventListener("keydown", function(event) {
 				switch (event.keyCode) {
@@ -94,55 +98,33 @@
 						break;
 				}
 			});
-
-			document.addEventListener("keyup", function(event) {
-				switch (event.keyCode) {
-					case 65: // A
-						leftPressed = false;
-						break;
-					case 68: // D
-						rightPressed = false;
-						break;
-					case 87: // W
-						upPressed = false;
-						break;
-					case 83: // S
-						downPressed = false;
-						break;
-					case 81: // Q
-						qPressed = false;
-						break;
-					case 82: // R
-						rPressed = false;
-						break;
-				}
-			});
-
+			
 			// Update the scene
-			function update() {
-				// Rotate left and right
-				if (qPressed) {
-					canvas.style.transform = "rotate(-1deg)";
-                    } else if (ePressed) {
-canvas.style.transform = "rotate(1deg)";
-}
-                
-                // Move the spaceship
-			if (aPressed) {
+		function update() {
+			// Rotate left and right
+			if (qPressed) {
+				canvas.style.transform = "rotate(-1deg)";
+			} else if (rPressed) {
+				canvas.style.transform = "rotate(1deg)";
+			}
+
+			// Move the spaceship
+			if (leftPressed) {
 				spaceship.x -= 5;
-			} else if (dPressed) {
+			} else if (rightPressed) {
 				spaceship.x += 5;
 			}
 
-			if (wPressed) {
+			if (upPressed) {
 				spaceship.y -= 5;
-			} else if (sPressed) {
+			} else if (downPressed) {
 				spaceship.y += 5;
 			}
 		}
 
 		// Call the update function every frame
 		setInterval(update, 1000 / 60); // 60 FPS
-	</script>
+	};
+</script>
 </body>
 </html>
