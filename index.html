@@ -1,88 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>My Game</title>
-    <style>
-        canvas {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<title>Starfield</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+		canvas {
+			display: block;
+		}
+	</style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <script>
+	<script>
+		window.onload = function() {
+			// Create the canvas
+			var canvas = document.createElement("canvas");
+			var context = canvas.getContext("2d");
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			document.body.appendChild(canvas);
 
-        var canvas = document.getElementById("gameCanvas");
-        var ctx = canvas.getContext("2d");
+			// Create the stars
+			var stars = [];
+			for (var i = 0; i < 1000; i++) {
+				var star = {
+					x: Math.random() * canvas.width,
+					y: Math.random() * canvas.height,
+					size: Math.random() * 3,
+					speed: Math.random() * 0.5 + 0.1
+				};
+				stars.push(star);
+			}
 
-        var stars = [];
-        var numStars = 1000;
+			// Set initial zoom level
+			var zoom = 1;
 
-        for (var i = 0; i < numStars; i++) {
-            var x = Math.random() * canvas.width;
-            var y = Math.random() * canvas.height;
-            var size = Math.random() * 2 + 1;
-            stars.push({ x: x, y: y, size: size });
-        }
+			// Draw the scene
+			function draw() {
+				// Clear the canvas
+				context.fillStyle = "#000000";
+				context.fillRect(0, 0, canvas.width, canvas.height);
 
-        var x = canvas.width / 2;
-        var y = canvas.height / 2;
+				// Zoom the scene
+				context.save();
+				context.translate(canvas.width / 2, canvas.height / 2);
+				context.scale(zoom, zoom);
+				context.translate(-canvas.width / 2, -canvas.height / 2);
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "white";
-            for (var i = 0; i < numStars; i++) {
-                var star = stars[i];
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-        }
+				// Draw the stars
+				context.fillStyle = "#ffffff";
+				for (var i = 0; i < stars.length; i++) {
+					var star = stars[i];
+					context.beginPath();
+					context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+					context.closePath();
+					context.fill();
+				}
 
-        function update() {
-            if (held_keys['a']) {
-                x -= 5;
-            }
-            if (held_keys['d']) {
-                x += 5;
-            }
-            if (held_keys['w']) {
-                y -= 5;
-            }
-            if (held_keys['s']) {
-                y += 5;
-            }
+				// Restore the context
+				context.restore();
 
-            // wrap around canvas edges
-            if (x < 0) {
-                x = canvas.width;
-            }
-            if (x > canvas.width) {
-                x = 0;
-            }
-            if (y < 0) {
-                y = canvas.height;
-            }
-            if (y > canvas.height) {
-                y = 0;
-            }
-        }
+				// Request another animation frame
+				requestAnimationFrame(draw);
+			}
 
-        function gameLoop() {
-            update();
-            draw();
-            window.requestAnimationFrame(gameLoop);
-        }
+			// Handle keyboard input
+			var upPressed = false;
+			var downPressed = false;
 
-        gameLoop();
+			document.addEventListener("keydown", function(event) {
+				switch (event.keyCode) {
+					case 87: // W
+						upPressed = true;
+						break;
+					case 83: // S
+						downPressed = true;
+						break;
+				}
+			});
 
-    </script>
+			document.addEventListener("keyup", function(event) {
+				switch (event.keyCode) {
+					case 87: // W
+						upPressed = false;
+						break;
+					case 83: // S
+						downPressed = false;
+						break;
+				}
+			});
+
+			// Update the scene
+			function update() {
+				// Zoom in and out
+				if (upPressed) {
+					zoom += 0.1;
+				} else if (downPressed) {
+					zoom -= 0.1;
+					if (zoom < 0.1) {
+						zoom = 0.1;
+					}
+				}
+			}
+
+			// Call the update function every frame
+			setInterval(update, 1000 / 60); // 60 FPS
+
+			// Start the animation
+			requestAnimationFrame(draw);
+		};
+	</script>
 </body>
 </html>
