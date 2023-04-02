@@ -89,4 +89,4 @@ function gameLoop() {
     
     // Draw the player
     ctx.fillStyle = "green";
-    ctx.fillRect(player.x, player.y, player.size, player.size);
+    ctx.fillRect(player
