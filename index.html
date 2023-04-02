@@ -1,105 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Letter Invaders</title>
-	<style>
-		canvas {
-			border: 1px solid black;
-		}
-	</style>
+    <title>Whack-a-Mole Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-	<canvas id="canvas" width="400" height="400"></canvas>
-	<script>
-		var canvas = document.getElementById("canvas");
-		var ctx = canvas.getContext("2d");
-
-		// Define the player object
-		var player = {
-			x: canvas.width / 2 - 25,
-			y: canvas.height - 50,
-			size: 50
-		};
-
-		// Define the enemy objects
-		var enemies = [];
-		function createEnemy() {
-			var enemy = {
-				x: Math.random() * (canvas.width - 20),
-				y: 0,
-				size: 20,
-				speed: 1,
-				letter: String.fromCharCode(Math.floor(Math.random() * 26) + 97)
-			};
-			enemies.push(enemy);
-		}
-
-		// Define the input string
-		var input = "";
-
-		// Define the score variable
-		var score = 0;
-
-		// Add event listener for key presses
-		document.addEventListener("keydown", function(event) {
-			if (event.keyCode >= 65 && event.keyCode <= 90) {
-				input += event.key.toLowerCase();
-			}
-		});
-
-		// Define the game loop
-		function gameLoop() {
-			// Clear the canvas
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-			// Move and draw the player
-			ctx.fillStyle = "green";
-			ctx.fillRect(player.x, player.y, player.size, player.size);
-
-			// Create enemies at random intervals
-			if (Math.random() < 0.02) {
-				createEnemy();
-			}
-
-			// Move and draw the enemies
-			for (var i = 0; i < enemies.length; i++) {
-				var enemy = enemies[i];
-				enemy.y += enemy.speed;
-				ctx.fillStyle = "red";
-				ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size);
-
-				// Check for collision with player
-				if (enemy.y + enemy.size >= player.y && enemy.x + enemy.size >= player.x && enemy.x <= player.x + player.size) {
-					// End the game
-					clearInterval(gameInterval);
-					alert("Game Over! Final Score: " + score);
-					return;
-				}
-
-				// Check for collision with input string
-				if (input.charAt(0) === enemy.letter) {
-					input = input.slice(1);
-					enemies.splice(i, 1);
-					score++;
-				}
-			}
-
-			// Display the input string
-			ctx.font = "30px Arial";
-			ctx.fillStyle = "white";
-			ctx.fillText(input, player.x, player.y - 10);
-
-			// Display the score
-			ctx.font = "20px Arial";
-			ctx.fillStyle = "white";
-			ctx.fillText("Score: " + score, 10, 25);
-
-			// Schedule the next frame
-			requestAnimationFrame(gameLoop);
-		}
-
-		// Start the game loop
-		var gameInterval = setInterval(gameLoop, 90);
-	</script>
+    <canvas id="canvas" width="400" height="400"></canvas>
 </body>
+<script src="whackamole.js"></script>
 </html>
