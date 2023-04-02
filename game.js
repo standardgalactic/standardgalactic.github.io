@@ -87,6 +87,84 @@ function gameLoop() {
     // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw the player
+   // Draw the player
     ctx.fillStyle = "green";
-    ctx.fillRect(player
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+    
+    // Move the player based on keyboard input
+    if (input.length > 0) {
+        var inputLetter = input.charAt(0);
+        if (inputLetter === 'A') {
+            moveLeft();
+        } else if (inputLetter === 'D') {
+            moveRight();
+        }
+    }
+    
+// Create enemies at random intervals
+if (Math.random() < 0.02) {
+    createEnemy();
+}
+
+// Move and draw the enemies
+for (var i = 0; i < enemies.length; i++) {
+    var enemy = enemies[i];
+    enemy.y += enemy.speed;
+    ctx.fillStyle = "red";
+    ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size);
+    
+    // Check for collision with player
+    if (checkEnemyPlayerCollision(enemy)) {
+        // End the game
+        clearInterval(gameInterval);
+        alert("Game Over! Final Score: " + score);
+        return;
+    }
+    
+    // Check for collision with bullets
+    for (var j = 0; j < bullets.length; j++) {
+        var bullet = bullets[j];
+        if (checkBulletEnemyCollision(bullet, enemy)) {
+            // Play sound effect
+            enemySound.play();
+            
+            // Remove the bullet and enemy from the game
+            bullets.splice(j, 1);
+            enemies.splice(i, 1);
+            
+            // Increment the score
+            score++;
+            updateScore();
+        }
+    }
+}
+
+// Move and draw the bullets
+for (var i = 0; i < bullets.length; i++) {
+    var bullet = bullets[i];
+    bullet.y -= bullet.speed;
+    ctx.fillStyle = "blue";
+    ctx.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
+    
+    // Remove bullets that have gone off-screen
+    if (bullet.y < 0) {
+        bullets.splice(i, 1);
+        i--;
+    }
+}
+
+// Display the input string
+ctx.font = "30px Arial";
+ctx.fillStyle = "white";
+ctx.fillText(input, player.x, player.y-10);
+
+// Remove the first letter of the input string if it matches the first letter of any enemy word
+for (var i = 0; i < enemies.length; i++) {
+    var enemy = enemies[i];
+    if (input.charAt(0) === enemy.letter) {
+        input = input.slice(1);
+    }
+}
+
+// Schedule the next frame
+requestAnimationFrame(gameLoop);
