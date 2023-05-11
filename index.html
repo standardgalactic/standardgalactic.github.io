@@ -29,7 +29,6 @@
                 var star = {
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    z: Math.random() * canvas.width,
                     size: Math.random() * 3,
                     speed: Math.random() * 0.5 + 0.1
                 };
@@ -46,31 +45,25 @@
                 context.fillStyle = "#ffffff";
                 for (var i = 0; i < stars.length; i++) {
                     var star = stars[i];
-
-                    // Adjust star position for 3D effect
-                    var dxCenter = star.x - (canvas.width / 2);
-                    var dyCenter = star.y - (canvas.height / 2);
-                    var distCenter = Math.sqrt(dxCenter * dxCenter + dyCenter * dyCenter);
-                    var distMax = Math.sqrt((canvas.width / 2) * (canvas.width / 2) + (canvas.height / 2) * (canvas.height / 2));
-                    var size = (1 - distCenter / distMax) * star.size;
-
                     context.beginPath();
-                    context.arc(star.x, star.y, size * star.z, 0, Math.PI * 2);
+                    context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                     context.closePath();
                     context.fill();
 
                     // Move the stars
-                    star.x += (backwardPressed - forwardPressed) * star.speed * (star.z * 0.1);
-                    star.y += (downPressed - upPressed) * star.speed * (star.z * 0.1);
+                    var dx = (canvas.width/2) - star.x;
+                    var dy = (canvas.height/2) - star.y;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Apply the movement
+                    var moveSpeed = star.speed * (forwardPressed - backwardPressed);
+                    star.x += dx / dist * moveSpeed;
+                    star.y += dy / dist * moveSpeed;
 
                     // Reset stars when they go out of frame
-                    if (star.x < 0 || star.x > canvas.width) {
+                    if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
                         star.x = Math.random() * canvas.width;
-                        star.z = Math.random() * canvas.width;
-                    }
-                    if (star.y < 0 || star.y > canvas.height) {
                         star.y = Math.random() * canvas.height;
-                        star.z = Math.random() * canvas.width;
                     }
                 }
 
@@ -79,38 +72,16 @@
             }
 
             // Handle keyboard input
-            var upPressed = 0;
-            var downPressed = 0;
-            var leftPressed = 0;
-            var rightPressed = 0;
             var forwardPressed = 0;
             var backwardPressed = 0;
 
             document.addEventListener("keydown", function(event) {
                 switch (event.key) {
-                                        case 'w': // W
+                    case 'w': // W
                         forwardPressed = 1;
                         break;
                     case 's': // S
                         backwardPressed = 1;
-                        break;
-                    case 'a': // A
-                        leftPressed = 1;
-                        break;
-                    case 'd': // D
-                        rightPressed = 1;
-                        break;
-                    case 'q': // Q
-                        leftPressed = 1;
-                        break;
-                    case 'e': // E
-                        rightPressed = 1;
-                        break;
-                    case 'r': // R
-                        upPressed = 1;
-                        break;
-                    case 'f': // F
-                        downPressed = 1;
                         break;
                 }
             });
@@ -123,24 +94,6 @@
                     case 's': // S
                         backwardPressed = 0;
                         break;
-                    case 'a': // A
-                        leftPressed = 0;
-                        break;
-                    case 'd': // D
-                        rightPressed = 0;
-                        break;
-                    case 'q': // Q
-                        leftPressed = 0;
-                        break;
-                    case 'e': // E
-                        rightPressed = 0;
-                        break;
-                    case 'r': // R
-                        upPressed = 0;
-                        break;
-                    case 'f': // F
-                        downPressed = 0;
-                        break;
                 }
             });
 
@@ -150,7 +103,6 @@
     </script>
 </body>
 </html>
-
 
 						
  
