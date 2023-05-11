@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,94 +15,59 @@
 	</style>
 </head>
 <body>
+	<script src="https://threejs.org/build/three.js"></script>
 	<script>
 		window.onload = function() {
-			// Create the canvas
-			var canvas = document.createElement("canvas");
-			var context = canvas.getContext("2d");
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-			document.body.appendChild(canvas);
+			// Create the renderer
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			// Create the scene
+			var scene = new THREE.Scene();
+
+			// Create the camera
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+			camera.position.z = 5;
 
 			// Create the stars
-			var stars = [];
+			var stars = new THREE.Geometry();
 			for (var i = 0; i < 1000; i++) {
-				var star = {
-					x: Math.random() * canvas.width,
-					y: Math.random() * canvas.height,
-					size: Math.random() * 3,
-					speed: Math.random() * 0.5 + 0.1
-				};
-				stars.push(star);
+				var star = new THREE.Vector3();
+				star.x = THREE.Math.randFloatSpread(2000);
+				star.y = THREE.Math.randFloatSpread(2000);
+				star.z = THREE.Math.randFloatSpread(2000);
+				stars.vertices.push(star);
 			}
-
-			// Draw the scene
-			function draw() {
-				// Clear the canvas
-				context.fillStyle = "#000000";
-				context.fillRect(0, 0, canvas.width, canvas.height);
-
-				// Draw the stars
-				context.fillStyle = "#ffffff";
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					context.beginPath();
-					context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-					context.closePath();
-					context.fill();
-				}
-
-				// Move the stars
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					star.x -= star.speed;
-					if (star.x < 0) {
-						star.x = canvas.width;
-					}
-				}
-
-				// Zoom in and out
-				if (upPressed) {
-					canvas.width *= 1.01;
-					canvas.height *= 1.01;
-				} else if (downPressed) {
-					canvas.width *= 0.99;
-					canvas.height *= 0.99;
-				}
-
-				// Request another animation frame
-				requestAnimationFrame(draw);
-			}
+			var starMaterial = new THREE.PointsMaterial({ color: 0x888888 });
+			var starField = new THREE.Points(stars, starMaterial);
+			scene.add(starField);
 
 			// Handle keyboard input
-			var upPressed = false;
-			var downPressed = false;
+			var keys = {};
+			document.addEventListener("keydown", function(event) { keys[event.keyCode] = true; });
+			document.addEventListener("keyup", function(event) { keys[event.keyCode] = false; });
 
-			document.addEventListener("keydown", function(event) {
-				switch (event.keyCode) {
-					case 87: // W
-						upPressed = true;
-						break;
-					case 83: // S
-						downPressed = true;
-						break;
-				}
-			});
+			// Animation loop
+			function animate() {
+				// Move the camera
+				if (keys[87]) camera.position.z -= 0.1; // W
+				if (keys[83]) camera.position.z += 0.1; // S
+				if (keys[65]) camera.position.x -= 0.1; // A
+				if (keys[68]) camera.position.x += 0.1; // D
+				// TODO: Add more movements
 
-			document.addEventListener("keyup", function(event) {
-				switch (event.keyCode) {
-					case 87: // W
-						upPressed = false;
-						break;
-					case 83: // S
-						downPressed = false;
-						break;
-				}
-			});
+				// Render the scene
+				renderer.render(scene, camera);
+
+				// Request another animation frame
+				requestAnimationFrame(animate);
+			}
 
 			// Start the animation loop
-			requestAnimationFrame(draw);
+			animate();
 		}
 	</script>
 </body>
 </html>
+
