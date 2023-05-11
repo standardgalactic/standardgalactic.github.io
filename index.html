@@ -1,130 +1,177 @@
-
-
-						
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>Starfield</title>
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
-		canvas {
-			display: block;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Starfield</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-	<script>
-		window.onload = function() {
-			// Create the canvas
-			var canvas = document.createElement("canvas");
-			var context = canvas.getContext("2d");
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-			document.body.appendChild(canvas);
+    <script>
+        window.onload = function() {
+            // Create the canvas
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
 
-			// Create the stars
-			var stars = [];
-			for (var i = 0; i < 1000; i++) {
-				var star = {
-					x: Math.random() * canvas.width,
-					y: Math.random() * canvas.height,
-					size: Math.random() * 3,
-					speed: Math.random() * 0.5 + 0.1
-				};
-				stars.push(star);
-			}
+            // Create the stars
+            var stars = [];
+            for (var i = 0; i < 1000; i++) {
+                var star = {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3,
+                    speed: Math.random() * 0.5 + 0.1
+                };
+                stars.push(star);
+            }
 
-			// Draw the scene
-			function draw() {
-				// Clear the canvas
-				context.fillStyle = "#000000";
-				context.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw the scene
+            function draw() {
+                // Clear the canvas
+                context.fillStyle = "#000000";
+                context.fillRect(0, 0, canvas.width, canvas.height);
 
-				// Draw the stars
-				context.fillStyle = "#ffffff";
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					context.beginPath();
-					context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-					context.closePath();
-					context.fill();
-				}
+                // Draw the stars
+                context.fillStyle = "#ffffff";
+                for (var i = 0; i < stars.length; i++) {
+                    var star = stars[i];
+                    context.beginPath();
+                    context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    context.closePath();
+                    context.fill();
 
-				// Move the stars
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					if (upPressed) { // Zoom in
-						star.x *= 1.01;
-						star.y *= 1.01;
-					} else if (downPressed) { // Zoom out
-						star.x *= 0.99;
-						star.y *= 0.99;
-					}
-					if (leftPressed) { // Strafe left
-						star.x += 5;
-					} else if (rightPressed) { // Strafe right
-						star.x -= 5;
-					}
-					if (star.x < 0) {
-						star.x = canvas.width;
-					}
-					if (star.x > canvas.width) {
-						star.x = 0;
-					}
-				}
+                    // Move the stars
+                    star.x += (forwardPressed - backwardPressed) * star.speed;
+                    star.y += (downPressed - upPressed) * star.speed;
+                    star.x += (rightPressed - leftPressed) * star.speed;
 
-				// Request another animation frame
-				requestAnimationFrame(draw);
-			}
+                    // Check boundaries
+                    if (star.x < 0) star.x += canvas.width;
+                    else if (star.x > canvas.width) star.x -= canvas.width;
+                    if (star.y < 0) star.y += canvas.height;
+                    else if (star.y > canvas.height) star.y -= canvas.height;
+                }
 
-			// Handle keyboard input
-			var upPressed = false;
-			var downPressed = false;
-			var leftPressed = false;
-			var rightPressed = false;
+                // Request another animation frame
+                requestAnimationFrame(draw);
+            }
 
-			document.addEventListener("keydown", function(event) {
-				switch (event.keyCode) {
-					case 87: // W
-						upPressed = true;
-						break;
-					case 83: // S
-						downPressed = true;
-						break;
-					case 65: // A
-						leftPressed = true;
-						break;
-					case 68: // D
-						rightPressed = true;
-						break;
-				}
-			});
-		
-		document.addEventListener("keyup", function(event) {
-	switch (event.keyCode) {
-		case 87: // W
-			upPressed = false;
-			break;
-		case 83: // S
-			downPressed = false;
-			break;
-		case 65: // A
-			leftPressed = false;
-			break;
-		case 68: // D
-			rightPressed = false;
-			break;
-	}
-});
+            // Handle keyboard input
+            var upPressed = 0;
+            var downPressed = 0;
+            var leftPressed = 0;
+            var rightPressed = 0;
+            var forwardPressed = 0;
+            var backwardPressed = 0;
 
-// Start the animation loop
-requestAnimationFrame(draw);
+            document.addEventListener("keydown", function(event) {
+                switch (event.key) {
+                    case 'w': // W
+                        forwardPressed = 1;
+                        break;
+                    case 's': // S
+                        backwardPressed = 1;
+                        break;
+                    case 'a': // A
+                        leftPressed = 1;
+                        break;
+                    case 'd': // D
+                        rightPressed = 1;
+                        break;
+                    case 'q': // Q
+                        leftPressed = 1;
+                        rightPressed = 0;
+                        break;
+                    case 'e': // E
+                        rightPressed = 1;
+                        leftPressed = 0;
+                        break;
+                    case 'r': // R
+                        upPressed = 1;
+                        downPressed = 0;
+                        break;
+                    case 'f': // F
+                        downPressed = 1;
+                        upPressed = 0;
+                        break;
+                                        case 'h': // H
+                        rightPressed = 1;
+                        leftPressed = 0;
+                        break;
+                    case 'j': // J
+                        downPressed = 1;
+                        upPressed = 0;
+                        break;
+                    case 'k': // K
+                        upPressed = 1;
+                        downPressed = 0;
+                        break;
+                    case 'l': // L
+                        leftPressed = 1;
+                        rightPressed = 0;
+                        break;
+                }
+            });
+        
+            document.addEventListener("keyup", function(event) {
+                switch (event.key) {
+                    case 'w': // W
+                        forwardPressed = 0;
+                        break;
+                    case 's': // S
+                        backwardPressed = 0;
+                        break;
+                    case 'a': // A
+                        leftPressed = 0;
+                        break;
+                    case 'd': // D
+                        rightPressed = 0;
+                        break;
+                    case 'q': // Q
+                        leftPressed = 0;
+                        break;
+                    case 'e': // E
+                        rightPressed = 0;
+                        break;
+                    case 'r': // R
+                        upPressed = 0;
+                        break;
+                    case 'f': // F
+                        downPressed = 0;
+                        break;
+                    case 'h': // H
+                        rightPressed = 0;
+                        break;
+                    case 'j': // J
+                        downPressed = 0;
+                        break;
+                    case 'k': // K
+                        upPressed = 0;
+                        break;
+                    case 'l': // L
+                        leftPressed = 0;
+                        break;
+                }
+            });
 
-		};
-	</script>
+            // Start the animation loop
+            requestAnimationFrame(draw);
+        };
+    </script>
 </body>
 </html>
+
+
+
+						
+ 
