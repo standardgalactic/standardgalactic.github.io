@@ -1,107 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>Starfield</title>
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
-		canvas {
-			display: block;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>Starfield</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-	<script>
-		window.onload = function() {
-			// Create the canvas
-			var canvas = document.createElement("canvas");
-			var context = canvas.getContext("2d");
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-			document.body.appendChild(canvas);
+    <script>
+        window.onload = function() {
+            // Create the canvas
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
 
-			// Create the stars
-			var stars = [];
-			for (var i = 0; i < 1000; i++) {
-				var star = {
-					x: Math.random() * canvas.width,
-					y: Math.random() * canvas.height,
-					size: Math.random() * 3,
-					speed: Math.random() * 0.5 + 0.1
-				};
-				stars.push(star);
-			}
+            // Create the stars
+            var stars = [];
+            for (var i = 0; i < 1000; i++) {
+                var star = {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3,
+                    speed: Math.random() * 0.5 + 0.1
+                };
+                stars.push(star);
+            }
 
-			// Draw the scene
-			function draw() {
-				// Clear the canvas
-				context.fillStyle = "#000000";
-				context.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw the scene
+            function draw() {
+                // Clear the canvas
+                context.fillStyle = "#000000";
+                context.fillRect(0, 0, canvas.width, canvas.height);
 
-				// Draw the stars
-				context.fillStyle = "#ffffff";
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					context.beginPath();
-					context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-					context.closePath();
-					context.fill();
-				}
+                // Draw the stars
+                context.fillStyle = "#ffffff";
+                for (var i = 0; i < stars.length; i++) {
+                    var star = stars[i];
+                    context.beginPath();
+                    context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    context.closePath();
+                    context.fill();
 
-				// Move the stars
-				for (var i = 0; i < stars.length; i++) {
-					var star = stars[i];
-					star.x -= star.speed;
-					if (star.x < 0) {
-						star.x = canvas.width;
-					}
-				}
+                    // Move the stars
+                    var dx = (canvas.width/2) - star.x;
+                    var dy = (canvas.height/2) - star.y;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
 
-				// Zoom in and out
-				if (upPressed) {
-					canvas.width *= 1.01;
-					canvas.height *= 1.01;
-				} else if (downPressed) {
-					canvas.width *= 0.99;
-					canvas.height *= 0.99;
-				}
+                    // Apply the movement
+                    var moveSpeed = star.speed * (forwardPressed - backwardPressed);
+                    star.x += dx / dist * moveSpeed;
+                    star.y += dy / dist * moveSpeed;
 
-				// Request another animation frame
-				requestAnimationFrame(draw);
-			}
+                    // Reset stars when they go out of frame
+                    if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
+                        star.x = Math.random() * canvas.width;
+                        star.y = Math.random() * canvas.height;
+                    }
+                }
 
-			// Handle keyboard input
-			var upPressed = false;
-			var downPressed = false;
+                // Request another animation frame
+                requestAnimationFrame(draw);
+            }
 
-			document.addEventListener("keydown", function(event) {
-				switch (event.keyCode) {
-					case 87: // W
-						upPressed = true;
-						break;
-					case 83: // S
-						downPressed = true;
-						break;
-				}
-			});
+            // Handle keyboard input
+            var forwardPressed = 0;
+            var backwardPressed = 0;
 
-			document.addEventListener("keyup", function(event) {
-				switch (event.keyCode) {
-					case 87: // W
-						upPressed = false;
-						break;
-					case 83: // S
-						downPressed = false;
-						break;
-				}
-			});
+            document.addEventListener("keydown", function(event) {
+                switch (event.key) {
+                    case 'w': // W
+                        forwardPressed = 1;
+                        break;
+                    case 's': // S
+                        backwardPressed = 1;
+                        break;
+                }
+            });
 
-			// Start the animation loop
-			requestAnimationFrame(draw);
-		}
-	</script>
+            document.addEventListener("keyup", function(event) {
+                switch (event.key) {
+                    case 'w': // W
+                        forwardPressed = 0;
+                        break;
+                    case 's': // S
+                        backwardPressed = 0;
+                        break;
+                }
+            });
+
+            // Start the animation loop
+            requestAnimationFrame(draw);
+        };
+    </script>
 </body>
 </html>
+
+						
+ 
