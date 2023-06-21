@@ -1,3 +1,3 @@
 # standardgalactic.github.io
 
-README
+The Technical Problem of Alignment
