@@ -15,105 +15,110 @@
 </head>
 <body>
     <script>
-        window.onload = function () {
-            // Setup and initialization
-            var canvas = document.createElement("canvas");
-            var context = canvas.getContext("2d");
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            document.body.appendChild(canvas);
+        // ========================================
+        // 1. INITIALIZATION
+        // ========================================
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        document.body.appendChild(canvas);
 
-            var moveSpeed = 5;
-            var rotateSpeed = 0.05;
-            var lookSpeed = 0.03;
-
-            var spaceship = {
-                x: canvas.width / 2,
-                y: canvas.height / 2,
-                angle: 0,
-                lookX: 0,
-                lookY: 0,
-                flightMode: true
-            };
-
-            var stars = [];
-            for (var i = 0; i < 1000; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 3,
-                    speed: Math.random() * 0.5 + 0.1
-                });
-            }
-
-            function draw() {
-                context.fillStyle = "#000000";
-                context.fillRect(0, 0, canvas.width, canvas.height);
-
-                context.save();
-                if (spaceship.flightMode) {
-                    context.translate(spaceship.x, spaceship.y);
-                    context.rotate(spaceship.angle);
-                    context.translate(-spaceship.x, -spaceship.y);
-                }
-
-                context.translate(spaceship.lookX, spaceship.lookY);
-
-                for (var star of stars) {
-                    context.beginPath();
-                    context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                    context.closePath();
-                    context.fill();
-
-                    if (spaceship.flightMode) {
-                        star.x += Math.cos(spaceship.angle + Math.PI) * moveSpeed;
-                        star.y += Math.sin(spaceship.angle + Math.PI) * moveSpeed;
-                    }
-
-                    if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
-                        star.x = Math.random() * canvas.width;
-                        star.y = Math.random() * canvas.height;
-                        star.size = Math.random() * 3;
-                    }
-                }
-
-                context.restore();
-
-                requestAnimationFrame(draw);
-            }
-
-            var keyMap = {};
-            document.addEventListener("keydown", function (event) {
-                keyMap[event.key] = true;
-
-                if (event.key === 'c') {
-                    spaceship.flightMode = !spaceship.flightMode;
-                }
-
-                // Movement controls
-                if (spaceship.flightMode) {
-                    if (keyMap['w']) { spaceship.y -= moveSpeed; }
-                    if (keyMap['s']) { spaceship.y += moveSpeed; }
-                    if (keyMap['a']) { spaceship.x -= moveSpeed; }
-                    if (keyMap['d']) { spaceship.x += moveSpeed; }
-                    if (keyMap['r']) { spaceship.y -= moveSpeed; }
-                    if (keyMap['f']) { spaceship.y += moveSpeed; }
-                    if (keyMap['q']) { spaceship.angle -= rotateSpeed; }
-                    if (keyMap['e']) { spaceship.angle += rotateSpeed; }
-                } else {
-                    if (keyMap['h']) { spaceship.lookX -= canvas.width * lookSpeed; }
-                    if (keyMap['l']) { spaceship.lookX += canvas.width * lookSpeed; }
-                    if (keyMap['j']) { spaceship.lookY += canvas.height * lookSpeed; }
-                    if (keyMap['k']) { spaceship.lookY -= canvas.height * lookSpeed; }
-                }
-            });
-
-            document.addEventListener("keyup", function (event) {
-                keyMap[event.key] = false;
-            });
-
-            requestAnimationFrame(draw);
+        // ========================================
+        // 2. DATA MODELS
+        // ========================================
+        let spaceship = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            speed: 5
         };
+
+        let stars = [];
+        for (let i = 0; i < 1000; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 3,
+                speed: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        let controls = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        };
+
+        // ========================================
+        // 3. DRAWING
+        // ========================================
+        function draw() {
+            // Clear canvas
+            context.fillStyle = "#000000";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw stars
+            context.fillStyle = "#ffffff";
+            for (let star of stars) {
+                context.beginPath();
+                context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                context.closePath();
+                context.fill();
+            }
+        }
+
+        // ========================================
+        // 4. UPDATING
+        // ========================================
+        function update() {
+            // Move spaceship based on controls
+            if (controls.up) spaceship.y -= spaceship.speed;
+            if (controls.down) spaceship.y += spaceship.speed;
+            if (controls.left) spaceship.x -= spaceship.speed;
+            if (controls.right) spaceship.x += spaceship.speed;
+
+            // Move stars in opposite direction for flying effect
+            for (let star of stars) {
+                if (controls.up) star.y += star.speed;
+                if (controls.down) star.y -= star.speed;
+                if (controls.left) star.x += star.speed;
+                if (controls.right) star.x -= star.speed;
+
+                // Recycle stars when out of bounds
+                if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
+                    star.x = Math.random() * canvas.width;
+                    star.y = Math.random() * canvas.height;
+                    star.size = Math.random() * 3;
+                }
+            }
+        }
+
+        // ========================================
+        // 5. EVENT HANDLERS
+        // ========================================
+        document.addEventListener("keydown", function (event) {
+            if (event.key === 'w') controls.up = true;
+            if (event.key === 's') controls.down = true;
+            if (event.key === 'a') controls.left = true;
+            if (event.key === 'd') controls.right = true;
+        });
+
+        document.addEventListener("keyup", function (event) {
+            if (event.key === 'w') controls.up = false;
+            if (event.key === 's') controls.down = false;
+            if (event.key === 'a') controls.left = false;
+            if (event.key === 'd') controls.right = false;
+        });
+
+        // Main Loop
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
     </script>
 </body>
 </html>
