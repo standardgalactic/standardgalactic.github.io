@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Starfield</title>
@@ -8,101 +9,130 @@
             margin: 0;
             overflow: hidden;
         }
+
         canvas {
             display: block;
         }
     </style>
 </head>
+
 <body>
     <script>
-        window.onload = function() {
-            // Create the canvas
+        window.onload = function () {
+            // ==============================
+            // SETUP AND INITIALIZATION
+            // ==============================
+
+            // Canvas setup
             var canvas = document.createElement("canvas");
             var context = canvas.getContext("2d");
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             document.body.appendChild(canvas);
 
-            // Create the stars
+            // Star creation
             var stars = [];
             for (var i = 0; i < 1000; i++) {
-                var star = {
+                stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: Math.random() * 3,
                     speed: Math.random() * 0.5 + 0.1
-                };
-                stars.push(star);
+                });
             }
 
-            // Draw the scene
+            // ==============================
+            // CORE GAME FUNCTIONS
+            // ==============================
+
+            // Draw the stars and handle their movement
             function draw() {
-                // Clear the canvas
+                clearCanvas();
+                drawStars();
+                requestAnimationFrame(draw);
+            }
+
+            function clearCanvas() {
                 context.fillStyle = "#000000";
                 context.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
-                // Draw the stars
+            function drawStars() {
                 context.fillStyle = "#ffffff";
-                for (var i = 0; i < stars.length; i++) {
-                    var star = stars[i];
+                for (var star of stars) {
                     context.beginPath();
                     context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                     context.closePath();
                     context.fill();
 
-                    // Move the stars
-                    var dx = (canvas.width/2) - star.x;
-                    var dy = (canvas.height/2) - star.y;
-                    var dist = Math.sqrt(dx * dx + dy * dy);
-
-                    // Apply the movement
-                    var moveSpeed = star.speed * (forwardPressed - backwardPressed);
-                    star.x += dx / dist * moveSpeed;
-                    star.y += dy / dist * moveSpeed;
-
-                    // Reset stars when they go out of frame
-                    if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
-                        star.x = Math.random() * canvas.width;
-                        star.y = Math.random() * canvas.height;
-                    }
+                    moveStar(star);
                 }
-
-                // Request another animation frame
-                requestAnimationFrame(draw);
             }
 
-            // Handle keyboard input
+            function moveStar(star) {
+                var dx = (canvas.width / 2) - star.x;
+                var dy = (canvas.height / 2) - star.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Modulate speed by direction of movement
+                var moveSpeed = star.speed * (forwardPressed - backwardPressed);
+                star.x += dx / dist * moveSpeed;
+                star.y += dy / dist * moveSpeed;
+
+                // Enhance zoom effect by increasing star size when moving forward
+                if (forwardPressed) {
+                    star.size += star.speed;
+                } else if (backwardPressed) {
+                    star.size -= star.speed;
+                    star.size = Math.max(0.1, star.size); // Prevent negative size
+                }
+
+                // Reset stars when they go out of frame
+                if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
+                    star.x = Math.random() * canvas.width;
+                    star.y = Math.random() * canvas.height;
+                    star.size = Math.random() * 3; // Reset size when star re-appears
+                }
+            }
+
+            // ==============================
+            // INPUT HANDLING
+            // ==============================
+
             var forwardPressed = 0;
             var backwardPressed = 0;
 
-            document.addEventListener("keydown", function(event) {
+            document.addEventListener("keydown", function (event) {
                 switch (event.key) {
-                    case 'w': // W
+                    case 'w': // Forward
                         forwardPressed = 1;
                         break;
-                    case 's': // S
+                    case 's': // Backward
                         backwardPressed = 1;
                         break;
                 }
             });
 
-            document.addEventListener("keyup", function(event) {
+            document.addEventListener("keyup", function (event) {
                 switch (event.key) {
-                    case 'w': // W
+                    case 'w':
                         forwardPressed = 0;
                         break;
-                    case 's': // S
+                    case 's':
                         backwardPressed = 0;
                         break;
                 }
             });
 
-            // Start the animation loop
+            // ==============================
+            // START GAME
+            // ==============================
+
             requestAnimationFrame(draw);
         };
     </script>
 </body>
-</html>
 
-						
+</html>
+				
  
