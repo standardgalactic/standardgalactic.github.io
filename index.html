@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Starfield</title>
@@ -8,25 +9,21 @@
             margin: 0;
             overflow: hidden;
         }
+
         canvas {
             display: block;
         }
     </style>
 </head>
+
 <body>
     <script>
-        // ========================================
-        // 1. INITIALIZATION
-        // ========================================
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         document.body.appendChild(canvas);
 
-        // ========================================
-        // 2. DATA MODELS
-        // ========================================
         let spaceship = {
             x: canvas.width / 2,
             y: canvas.height / 2,
@@ -44,21 +41,22 @@
         }
 
         let controls = {
+            forward: false,
+            backward: false,
+            leftRotate: false,
+            rightRotate: false,
             up: false,
             down: false,
-            left: false,
-            right: false
+            leftView: false,
+            rightView: false,
+            upView: false,
+            downView: false
         };
 
-        // ========================================
-        // 3. DRAWING
-        // ========================================
         function draw() {
-            // Clear canvas
             context.fillStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw stars
             context.fillStyle = "#ffffff";
             for (let star of stars) {
                 context.beginPath();
@@ -68,24 +66,19 @@
             }
         }
 
-        // ========================================
-        // 4. UPDATING
-        // ========================================
         function update() {
-            // Move spaceship based on controls
-            if (controls.up) spaceship.y -= spaceship.speed;
-            if (controls.down) spaceship.y += spaceship.speed;
-            if (controls.left) spaceship.x -= spaceship.speed;
-            if (controls.right) spaceship.x += spaceship.speed;
+            let moveFactor = controls.forward ? 1 : controls.backward ? -1 : 0;
+            let rotateFactor = controls.rightRotate ? 1 : controls.leftRotate ? -1 : 0;
+            let viewXFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
+            let viewYFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
 
-            // Move stars in opposite direction for flying effect
             for (let star of stars) {
-                if (controls.up) star.y += star.speed;
-                if (controls.down) star.y -= star.speed;
-                if (controls.left) star.x += star.speed;
-                if (controls.right) star.x -= star.speed;
+                star.y += star.speed * moveFactor;
+                star.x += star.speed * rotateFactor;
 
-                // Recycle stars when out of bounds
+                star.x += star.speed * viewXFactor * 0.5;
+                star.y += star.speed * viewYFactor * 0.5;
+
                 if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
                     star.x = Math.random() * canvas.width;
                     star.y = Math.random() * canvas.height;
@@ -94,24 +87,76 @@
             }
         }
 
-        // ========================================
-        // 5. EVENT HANDLERS
-        // ========================================
-        document.addEventListener("keydown", function (event) {
-            if (event.key === 'w') controls.up = true;
-            if (event.key === 's') controls.down = true;
-            if (event.key === 'a') controls.left = true;
-            if (event.key === 'd') controls.right = true;
+        document.addEventListener("keydown", function(event) {
+            switch (event.key) {
+                case 'w':
+                    controls.forward = true;
+                    break;
+                case 's':
+                    controls.backward = true;
+                    break;
+                case 'q':
+                    controls.leftRotate = true;
+                    break;
+                case 'e':
+                    controls.rightRotate = true;
+                    break;
+                case 'r':
+                    controls.up = true;
+                    break;
+                case 'f':
+                    controls.down = true;
+                    break;
+                case 'h':
+                    controls.leftView = true;
+                    break;
+                case 'j':
+                    controls.downView = true;
+                    break;
+                case 'k':
+                    controls.upView = true;
+                    break;
+                case 'l':
+                    controls.rightView = true;
+                    break;
+            }
         });
 
-        document.addEventListener("keyup", function (event) {
-            if (event.key === 'w') controls.up = false;
-            if (event.key === 's') controls.down = false;
-            if (event.key === 'a') controls.left = false;
-            if (event.key === 'd') controls.right = false;
+        document.addEventListener("keyup", function(event) {
+            switch (event.key) {
+                case 'w':
+                    controls.forward = false;
+                    break;
+                case 's':
+                    controls.backward = false;
+                    break;
+                case 'q':
+                    controls.leftRotate = false;
+                    break;
+                case 'e':
+                    controls.rightRotate = false;
+                    break;
+                case 'r':
+                    controls.up = false;
+                    break;
+                case 'f':
+                    controls.down = false;
+                    break;
+                case 'h':
+                    controls.leftView = false;
+                    break;
+                case 'j':
+                    controls.downView = false;
+                    break;
+                case 'k':
+                    controls.upView = false;
+                    break;
+                case 'l':
+                    controls.rightView = false;
+                    break;
+            }
         });
 
-        // Main Loop
         function loop() {
             update();
             draw();
@@ -119,6 +164,8 @@
         }
 
         loop();
+
     </script>
 </body>
+
 </html>
