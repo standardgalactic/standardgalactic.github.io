@@ -32,7 +32,7 @@
             acceleration: 0.1
         };
 
-        let words = ["hello", "world", "space", "bubble", "fly", "star", "planet", "galaxy"];
+        let words = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega"];
         let bubbles = [];
         for (let i = 0; i < 1000; i++) {
             bubbles.push({
@@ -66,14 +66,13 @@
                     context.fillText("Planetary Brake Activating", canvas.width / 2, 30);
                     context.fillStyle = "#ffffff";
                     context.fillText(bubble.word, bubble.x, bubble.y);
-                } else {
-                    context.fillStyle = "#ffffff";
                 }
 
+                context.strokeStyle = "#ffffff";
                 context.beginPath();
                 context.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 context.closePath();
-                context.fill();
+                context.stroke();
             }
         }
 
@@ -105,11 +104,11 @@
                     }
                 }
 
-                bubble.y += bubble.speed * spaceship.speed;
-                bubble.x += bubble.speed * rotateFactor * spaceship.speed;
+                bubble.y += spaceship.speed;
+                bubble.x += rotateFactor * spaceship.speed;
 
-                bubble.x += bubble.speed * viewXFactor * spaceship.speed * 0.5;
-                bubble.y += bubble.speed * viewYFactor * spaceship.speed * 0.5;
+                bubble.x += viewXFactor * spaceship.speed * 0.5;
+                bubble.y += viewYFactor * spaceship.speed * 0.5;
 
                 if (bubble.x < 0 || bubble.x > canvas.width || bubble.y < 0 || bubble.y > canvas.height) {
                     bubble.x = Math.random() * canvas.width;
