@@ -36,9 +36,10 @@
         let bubbles = [];
         for (let i = 0; i < 1000; i++) {
             bubbles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 3,
+                x: Math.random() * canvas.width - spaceship.x,
+                y: Math.random() * canvas.height - spaceship.y,
+                z: Math.random() * canvas.width,
+                size: 3,
                 speed: Math.random() * 0.5 + 0.1,
                 word: words[Math.floor(Math.random() * words.length)],
                 isFocused: false
@@ -61,18 +62,26 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let bubble of bubbles) {
+                let scale = canvas.width / bubble.z;
+                let x = spaceship.x + bubble.x * scale;
+                let y = spaceship.y + bubble.y * scale;
+
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating", canvas.width / 2, 30);
-                    context.fillStyle = "#ffffff";
-                    context.fillText(bubble.word, bubble.x, bubble.y);
+                    context.fillText("Planetary Brake Activating", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
                 context.beginPath();
-                context.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+                context.arc(x, y, bubble.size * scale, 0, Math.PI * 2);
+                context.fillStyle = "#000";
+                context.fill();
                 context.closePath();
                 context.stroke();
+                if (scale > 0.1) {
+                    context.fillStyle = "#ffffff";
+                    context.fillText(bubble.word, x, y);
+                }
             }
         }
 
@@ -90,37 +99,30 @@
             }
 
             let rotateFactor = controls.rightRotate ? 1 : controls.leftRotate ? -1 : 0;
-            let viewXFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
-            let viewYFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
 
             for (let bubble of bubbles) {
                 if (bubble.isFocused) {
                     bubble.size += 0.05;
-                    if (bubble.size > 50) {
-                        spaceship.speed -= spaceship.acceleration * 2;
-                        if (spaceship.speed < 0) {
-                            spaceship.speed = 0;
-                        }
-                    }
                 }
 
-                bubble.y += spaceship.speed;
-                bubble.x += rotateFactor * spaceship.speed;
+                bubble.z -= spaceship.speed;
+                bubble.x += rotateFactor * 5;
 
-                bubble.x += viewXFactor * spaceship.speed * 0.5;
-                bubble.y += viewYFactor * spaceship.speed * 0.5;
-
-                if (bubble.x < 0 || bubble.x > canvas.width || bubble.y < 0 || bubble.y > canvas.height) {
-                    bubble.x = Math.random() * canvas.width;
-                    bubble.y = Math.random() * canvas.height;
-                    bubble.size = Math.random() * 3;
+                if (bubble.z < 0.5 || bubble.z > canvas.width || bubble.x < -canvas.width / 2 || bubble.x > canvas.width * 1.5 || bubble.y < -canvas.height / 2 || bubble.y > canvas.height * 1.5) {
+                    bubble.x = Math.random() * canvas.width - spaceship.x;
+                    bubble.y = Math.random() * canvas.height - spaceship.y;
+                    bubble.z = canvas.width;
                     bubble.isFocused = false;
                 }
             }
 
             // Check for focus
             for (let bubble of bubbles) {
-                if (bubble.x > spaceship.x - 20 && bubble.x < spaceship.x + 20 && bubble.y > spaceship.y - 20 && bubble.y < spaceship.y + 20) {
+                let scale = canvas.width / bubble.z;
+                let x = spaceship.x + bubble.x * scale;
+                let y = spaceship.y + bubble.y * scale;
+
+                if (x > spaceship.x - 20 && x < spaceship.x + 20 && y > spaceship.y - 20 && y < spaceship.y + 20) {
                     bubble.isFocused = true;
                 } else {
                     bubble.isFocused = false;
@@ -141,6 +143,12 @@
                     break;
                 case 'd':
                     controls.rightRotate = true;
+                    break;
+                case 'q':
+                    controls.leftView = true;
+                    break;
+                case 'e':
+                    controls.rightView = true;
                     break;
                 case 'h':
                     controls.leftView = true;
@@ -170,6 +178,12 @@
                     break;
                 case 'd':
                     controls.rightRotate = false;
+                    break;
+                case 'q':
+                    controls.leftView = false;
+                    break;
+                case 'e':
+                    controls.rightView = false;
                     break;
                 case 'h':
                     controls.leftView = false;
