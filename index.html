@@ -30,13 +30,15 @@
             speed: 5
         };
 
-        let stars = [];
+        let words = ["hello", "world", "space", "bubble", "fly", "star", "planet", "galaxy"];
+        let bubbles = [];
         for (let i = 0; i < 1000; i++) {
-            stars.push({
+            bubbles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 size: Math.random() * 3,
-                speed: Math.random() * 0.5 + 0.1
+                speed: Math.random() * 0.5 + 0.1,
+                word: words[Math.floor(Math.random() * words.length)]
             });
         }
 
@@ -44,45 +46,39 @@
             forward: false,
             backward: false,
             leftRotate: false,
-            rightRotate: false,
-            up: false,
-            down: false,
-            leftView: false,
-            rightView: false,
-            upView: false,
-            downView: false
+            rightRotate: false
         };
 
         function draw() {
             context.fillStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
-            context.fillStyle = "#ffffff";
-            for (let star of stars) {
+            for (let bubble of bubbles) {
+                context.fillStyle = "#ffffff";
                 context.beginPath();
-                context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                context.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 context.closePath();
                 context.fill();
+
+                if (Math.abs(spaceship.x - bubble.x) < 50 && Math.abs(spaceship.y - bubble.y) < 50) {
+                    context.fillStyle = "#ffffff";
+                    context.fillText(bubble.word, bubble.x, bubble.y);
+                }
             }
         }
 
         function update() {
             let moveFactor = controls.forward ? 1 : controls.backward ? -1 : 0;
             let rotateFactor = controls.rightRotate ? 1 : controls.leftRotate ? -1 : 0;
-            let viewXFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
-            let viewYFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
 
-            for (let star of stars) {
-                star.y += star.speed * moveFactor;
-                star.x += star.speed * rotateFactor;
+            for (let bubble of bubbles) {
+                bubble.y += bubble.speed * moveFactor;
+                bubble.x += bubble.speed * rotateFactor;
 
-                star.x += star.speed * viewXFactor * 0.5;
-                star.y += star.speed * viewYFactor * 0.5;
-
-                if (star.x < 0 || star.x > canvas.width || star.y < 0 || star.y > canvas.height) {
-                    star.x = Math.random() * canvas.width;
-                    star.y = Math.random() * canvas.height;
-                    star.size = Math.random() * 3;
+                if (bubble.x < 0 || bubble.x > canvas.width || bubble.y < 0 || bubble.y > canvas.height) {
+                    bubble.x = Math.random() * canvas.width;
+                    bubble.y = Math.random() * canvas.height;
+                    bubble.size = Math.random() * 3;
                 }
             }
         }
@@ -101,24 +97,6 @@
                 case 'e':
                     controls.rightRotate = true;
                     break;
-                case 'r':
-                    controls.up = true;
-                    break;
-                case 'f':
-                    controls.down = true;
-                    break;
-                case 'h':
-                    controls.leftView = true;
-                    break;
-                case 'j':
-                    controls.downView = true;
-                    break;
-                case 'k':
-                    controls.upView = true;
-                    break;
-                case 'l':
-                    controls.rightView = true;
-                    break;
             }
         });
 
@@ -136,24 +114,6 @@
                 case 'e':
                     controls.rightRotate = false;
                     break;
-                case 'r':
-                    controls.up = false;
-                    break;
-                case 'f':
-                    controls.down = false;
-                    break;
-                case 'h':
-                    controls.leftView = false;
-                    break;
-                case 'j':
-                    controls.downView = false;
-                    break;
-                case 'k':
-                    controls.upView = false;
-                    break;
-                case 'l':
-                    controls.rightView = false;
-                    break;
             }
         });
 
@@ -164,7 +124,6 @@
         }
 
         loop();
-
     </script>
 </body>
 
