@@ -27,7 +27,9 @@
         let spaceship = {
             x: canvas.width / 2,
             y: canvas.height / 2,
-            speed: 5
+            speed: 0,
+            maxSpeed: 5,
+            acceleration: 0.1
         };
 
         let words = ["hello", "world", "space", "bubble", "fly", "star", "planet", "galaxy"];
@@ -38,15 +40,20 @@
                 y: Math.random() * canvas.height,
                 size: Math.random() * 3,
                 speed: Math.random() * 0.5 + 0.1,
-                word: words[Math.floor(Math.random() * words.length)]
+                word: words[Math.floor(Math.random() * words.length)],
+                isFocused: false
             });
         }
 
         let controls = {
-            forward: false,
-            backward: false,
+            up: false,
+            down: false,
             leftRotate: false,
-            rightRotate: false
+            rightRotate: false,
+            leftView: false,
+            downView: false,
+            upView: false,
+            rightView: false
         };
 
         function draw() {
@@ -54,65 +61,128 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let bubble of bubbles) {
-                context.fillStyle = "#ffffff";
+                if (bubble.isFocused) {
+                    context.fillStyle = "#FF0000";
+                    context.fillText("Planetary Brake Activating", canvas.width / 2, 30);
+                    context.fillStyle = "#ffffff";
+                    context.fillText(bubble.word, bubble.x, bubble.y);
+                } else {
+                    context.fillStyle = "#ffffff";
+                }
+
                 context.beginPath();
                 context.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
                 context.closePath();
                 context.fill();
-
-                if (Math.abs(spaceship.x - bubble.x) < 50 && Math.abs(spaceship.y - bubble.y) < 50) {
-                    context.fillStyle = "#ffffff";
-                    context.fillText(bubble.word, bubble.x, bubble.y);
-                }
             }
         }
 
         function update() {
-            let moveFactor = controls.forward ? 1 : controls.backward ? -1 : 0;
+            if (controls.up) {
+                spaceship.speed += spaceship.acceleration;
+                if (spaceship.speed > spaceship.maxSpeed) {
+                    spaceship.speed = spaceship.maxSpeed;
+                }
+            } else if (controls.down) {
+                spaceship.speed -= spaceship.acceleration;
+                if (spaceship.speed < 0) {
+                    spaceship.speed = 0;
+                }
+            }
+
             let rotateFactor = controls.rightRotate ? 1 : controls.leftRotate ? -1 : 0;
+            let viewXFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
+            let viewYFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
 
             for (let bubble of bubbles) {
-                bubble.y += bubble.speed * moveFactor;
-                bubble.x += bubble.speed * rotateFactor;
+                if (bubble.isFocused) {
+                    bubble.size += 0.05;
+                    if (bubble.size > 50) {
+                        spaceship.speed -= spaceship.acceleration * 2;
+                        if (spaceship.speed < 0) {
+                            spaceship.speed = 0;
+                        }
+                    }
+                }
+
+                bubble.y += bubble.speed * spaceship.speed;
+                bubble.x += bubble.speed * rotateFactor * spaceship.speed;
+
+                bubble.x += bubble.speed * viewXFactor * spaceship.speed * 0.5;
+                bubble.y += bubble.speed * viewYFactor * spaceship.speed * 0.5;
 
                 if (bubble.x < 0 || bubble.x > canvas.width || bubble.y < 0 || bubble.y > canvas.height) {
                     bubble.x = Math.random() * canvas.width;
                     bubble.y = Math.random() * canvas.height;
                     bubble.size = Math.random() * 3;
+                    bubble.isFocused = false;
+                }
+            }
+
+            // Check for focus
+            for (let bubble of bubbles) {
+                if (bubble.x > spaceship.x - 20 && bubble.x < spaceship.x + 20 && bubble.y > spaceship.y - 20 && bubble.y < spaceship.y + 20) {
+                    bubble.isFocused = true;
+                } else {
+                    bubble.isFocused = false;
                 }
             }
         }
 
         document.addEventListener("keydown", function(event) {
             switch (event.key) {
-                case 'w':
-                    controls.forward = true;
+                case 'r':
+                    controls.up = true;
                     break;
-                case 's':
-                    controls.backward = true;
+                case 'f':
+                    controls.down = true;
                     break;
-                case 'q':
+                case 'a':
                     controls.leftRotate = true;
                     break;
-                case 'e':
+                case 'd':
                     controls.rightRotate = true;
+                    break;
+                case 'h':
+                    controls.leftView = true;
+                    break;
+                case 'j':
+                    controls.downView = true;
+                    break;
+                case 'k':
+                    controls.upView = true;
+                    break;
+                case 'l':
+                    controls.rightView = true;
                     break;
             }
         });
 
         document.addEventListener("keyup", function(event) {
             switch (event.key) {
-                case 'w':
-                    controls.forward = false;
+                case 'r':
+                    controls.up = false;
                     break;
-                case 's':
-                    controls.backward = false;
+                case 'f':
+                    controls.down = false;
                     break;
-                case 'q':
+                case 'a':
                     controls.leftRotate = false;
                     break;
-                case 'e':
+                case 'd':
                     controls.rightRotate = false;
+                    break;
+                case 'h':
+                    controls.leftView = false;
+                    break;
+                case 'j':
+                    controls.downView = false;
+                    break;
+                case 'k':
+                    controls.upView = false;
+                    break;
+                case 'l':
+                    controls.rightView = false;
                     break;
             }
         });
