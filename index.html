@@ -64,6 +64,9 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let bubble of bubbles) {
+                let verticalMoveFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
+                bubble.y += verticalMoveFactor * 5;
+             
                 let scale = canvas.width / bubble.z;
                 let x = spaceship.x + bubble.x * scale;
                 let y = spaceship.y + bubble.y * scale;
@@ -100,8 +103,6 @@
                 }
             }
 
-            let verticalMoveFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
-bubble.y += verticalMoveFactor * 5;
 
             let rotateViewFactor = controls.rightView ? 0.05 : controls.leftView ? -0.05 : 0;
             
