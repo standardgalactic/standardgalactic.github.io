@@ -57,19 +57,9 @@
             rightView: false
         };
 
-    let rotateViewFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
-    
-    for (let bubble of bubbles) {
-        let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x);
-        angle += rotateViewFactor * 0.05; // Adjust the 0.05 value for faster/slower rotation
-    
-        let distance = Math.sqrt((bubble.x - spaceship.x) ** 2 + (bubble.y - spaceship.y) ** 2);
-        bubble.x = spaceship.x + distance * Math.cos(angle);
-        bubble.y = spaceship.y + distance * Math.sin(angle);
-    }
 
-        
-        function draw() {
+    
+         function draw() {
             context.fillStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -80,7 +70,7 @@
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
@@ -108,6 +98,20 @@
                 if (spaceship.speed < 0) {
                     spaceship.speed = 0;
                 }
+            }
+
+            let verticalMoveFactor = controls.upView ? 1 : controls.downView ? -1 : 0;
+bubble.y += verticalMoveFactor * 5;
+
+            let rotateViewFactor = controls.rightView ? 0.05 : controls.leftView ? -0.05 : 0;
+            
+            for (let bubble of bubbles) {
+                let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x);
+                angle += rotateViewFactor;
+            
+                let distance = Math.sqrt((bubble.x - spaceship.x) ** 2 + (bubble.y - spaceship.y) ** 2);
+                bubble.x = spaceship.x + distance * Math.cos(angle);
+                bubble.y = spaceship.y + distance * Math.sin(angle);
             }
 
             let rotateFactor = controls.rightRotate ? 1 : controls.leftRotate ? -1 : 0;
@@ -174,6 +178,12 @@
                 case 'l':
                     controls.rightView = true;
                     break;
+                case 'r':
+                    controls.upView = true;
+                    break;
+                case 'f':
+                    controls.downView = true;
+                    break;
             }
         });
 
@@ -209,6 +219,13 @@
                 case 'l':
                     controls.rightView = false;
                     break;
+                case 'r':
+                    controls.upView = false;
+                    break;
+                case 'f':
+                    controls.downView = false;
+                    break;
+
             }
         });
 
