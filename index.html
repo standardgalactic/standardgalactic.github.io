@@ -57,6 +57,18 @@
             rightView: false
         };
 
+    let rotateViewFactor = controls.rightView ? 1 : controls.leftView ? -1 : 0;
+    
+    for (let bubble of bubbles) {
+        let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x);
+        angle += rotateViewFactor * 0.05; // Adjust the 0.05 value for faster/slower rotation
+    
+        let distance = Math.sqrt((bubble.x - spaceship.x) ** 2 + (bubble.y - spaceship.y) ** 2);
+        bubble.x = spaceship.x + distance * Math.cos(angle);
+        bubble.y = spaceship.y + distance * Math.sin(angle);
+    }
+
+        
         function draw() {
             context.fillStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
