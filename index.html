@@ -57,7 +57,8 @@
             rightView: false
         };
 
-
+        let viewRotationX = 0;   // Rotation for h and l
+        let viewRotationY = 0;   // Rotation for j and k
     
          function draw() {
             context.fillStyle = "#000000";
@@ -107,6 +108,13 @@
             let rotateViewFactor = controls.rightView ? 0.05 : controls.leftView ? -0.05 : 0;
             
             for (let bubble of bubbles) {
+                for (let bubble of bubbles) {
+    let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x) + viewRotationX;
+
+    let distance = Math.sqrt((bubble.x - spaceship.x) ** 2 + (bubble.y - spaceship.y) ** 2);
+    bubble.x = spaceship.x + distance * Math.cos(angle);
+    bubble.y = spaceship.y + distance * Math.sin(angle) + viewRotationY;
+                
                 let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x);
                 angle += rotateViewFactor;
             
@@ -167,24 +175,28 @@
                 case 'e':
                     controls.rightView = true;
                     break;
-                case 'h':
-                    controls.leftView = true;
-                    break;
-                case 'j':
-                    controls.downView = true;
-                    break;
-                case 'k':
-                    controls.upView = true;
-                    break;
-                case 'l':
-                    controls.rightView = true;
-                    break;
+           
                 case 'r':
                     controls.upView = true;
                     break;
                 case 'f':
                     controls.downView = true;
                     break;
+           case 'h':
+            viewRotationX -= 0.05;   // You can adjust the value for a faster or slower rotation
+            break;
+        case 'l':
+            viewRotationX += 0.05;
+            break;
+        case 'j':
+            viewRotationY += 5;     // Adjust the value for a faster or slower vertical view change
+            break;
+        case 'k':
+            viewRotationY -= 5;
+            break;
+
+            
+            
             }
         });
 
