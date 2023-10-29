@@ -1,28 +1,35 @@
-<!DOCTYPE html>
-<html>
+<title>Starfield</title>
+<style>
+    @font-face {
+        font-family: 'SgaRegular';
+        src: url('fonts/SgaRegular.woff2') format('woff2'),
+             url('fonts/Sga-Regular.woff') format('woff'),
+             url('fonts/Sga-Regular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <title>Starfield</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'SgaRegular'; 
+    }
 
-        canvas {
-            display: block;
-        }
-    </style>
-</head>
+    canvas {
+        display: block;
+    }
+</style>
 <script src="planets.js"></script>
+</head>
+
 <body>
-    <script>
-        let canvas = document.createElement("canvas");
-        let context = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        document.body.appendChild(canvas);
+<script>
+    let isUsingCustomFont = true;
+    let canvas = document.createElement("canvas");
+    let context = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
 
         let spaceship = {
             x: canvas.width / 2,
@@ -187,7 +194,14 @@
         case 'k':
             viewRotationY -= 5;
             break;
-            
+            case 'z': // Toggle the font
+                    if (isUsingCustomFont) {
+                        document.body.style.fontFamily = "sans-serif";
+                    } else {
+                        document.body.style.fontFamily = "SgaRegular";
+                    }
+                    isUsingCustomFont = !isUsingCustomFont;
+                    break;
             }
         });
 
