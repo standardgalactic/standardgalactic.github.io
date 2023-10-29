@@ -31,7 +31,7 @@
     let isUsingCustomFont = true;
     let canvas = document.createElement("canvas");
     let context = canvas.getContext("2d");
-    context.font = "20px 'Sga Regular'";
+    context.font = "30px 'Sga Regular'";
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
@@ -82,7 +82,7 @@
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
@@ -202,10 +202,10 @@
             case 'z': // Toggle the font
                     if (isUsingCustomFont) {
                         document.body.style.fontFamily = "Sga Regular";
-                        context.font = "20px 'Sga Regular'";
+                        context.font = "30px 'Sga Regular'";
                     } else {
                         document.body.style.fontFamily = "sans-serif";
-                        context.font = "10px sans-serif";
+                        context.font = "15px sans-serif";
                     }
                     isUsingCustomFont = !isUsingCustomFont;
                     break;
