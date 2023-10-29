@@ -1,7 +1,7 @@
 <title>Starfield</title>
 <style>
     @font-face {
-        font-family: 'Sga-Regular';
+        font-family: 'Sga Regular';
         src: url('fonts/Sga-Regular.woff2') format('woff2'),
              url('fonts/Sga-Regular.woff') format('woff'),
              url('fonts/Sga-Regular.ttf') format('truetype');
@@ -12,7 +12,7 @@
     body {
         margin: 0;
         overflow: hidden;
-        font-family: 'Sga-Regular'; 
+        font-family: 'Sga Regular'; 
     }
 
     canvas {
@@ -77,7 +77,7 @@
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
@@ -198,7 +198,7 @@
                     if (isUsingCustomFont) {
                         document.body.style.fontFamily = "sans-serif";
                     } else {
-                        document.body.style.fontFamily = "Sga-Regular";
+                        document.body.style.fontFamily = "Sga Regular";
                     }
                     isUsingCustomFont = !isUsingCustomFont;
                     break;
