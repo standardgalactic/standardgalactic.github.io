@@ -31,6 +31,7 @@
     let isUsingCustomFont = true;
     let canvas = document.createElement("canvas");
     let context = canvas.getContext("2d");
+    context.font = "20px 'Sga Regular'";
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
@@ -201,8 +202,10 @@
             case 'z': // Toggle the font
                     if (isUsingCustomFont) {
                         document.body.style.fontFamily = "sans-serif";
+                        context.font = "20px sans-serif";
                     } else {
                         document.body.style.fontFamily = "Sga Regular";
+                        context.font = "40px 'Sga Regular'";
                     }
                     isUsingCustomFont = !isUsingCustomFont;
                     break;
