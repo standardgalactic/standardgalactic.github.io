@@ -40,8 +40,8 @@
         <li>WASD: Move ship</li>
         <li>QE: Rotate left/right</li>
         <li>RF: View up/down</li>
-        <li>HL: Flip Left and Right view</li>
-        <li>JK: Zip Down and Up </li>
+        <li>HL: Warp left and right</li>
+        <li>JK: Zip down and up </li>
         <li>Z: Toggle Standard Galactic</li>
         <li>G: Global Reset</li>
         
@@ -122,7 +122,7 @@ function resetControlPanelTimeout() {
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating!!", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
