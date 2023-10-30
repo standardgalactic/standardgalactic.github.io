@@ -74,7 +74,7 @@ function resetControlPanelTimeout() {
     clearTimeout(controlPanelTimeout);
     controlPanelTimeout = setTimeout(() => {
         document.getElementById("controlPanel").style.display = "none";
-    }, 5000);
+    }, 10000);
 }
         let spaceship = {
             x: canvas.width / 2,
@@ -122,7 +122,7 @@ function resetControlPanelTimeout() {
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating!!", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
@@ -152,7 +152,7 @@ function resetControlPanelTimeout() {
                 }
             }
 
-            let rotateViewFactor = controls.rightView ? 0.05 : controls.leftView ? -0.05 : 0;
+            let rotateViewFactor = controls.rightView ? 0.025 : controls.leftView ? -0.025 : 0;
             
             for (let bubble of bubbles) {
                 let angle = Math.atan2(bubble.y - spaceship.y, bubble.x - spaceship.x) + viewRotationX;
