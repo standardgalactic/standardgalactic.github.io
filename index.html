@@ -214,6 +214,9 @@ function resetControlPanelTimeout() {
                 case 'q':
                     controls.leftView = true;
                     break;
+                 case 'g': // Simulate F5 reset
+                    location.reload(); 
+                    break;
                 case 'e':
                     controls.rightView = true;
                     break;
