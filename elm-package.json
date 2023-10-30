@@ -1,0 +1,19 @@
+{
+    "version": "0.1.0",
+    "summary": "An Asteroids clone written in Elm.",
+    "repository": "https://github.com/standardgalactic/asteroids.git",
+    "_comment": "Original - https://github.com/yupferris/elmsteroids.git"
+    "license": "BSD2",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": [],
+    "dependencies": {
+        "elm-lang/animation-frame": "1.0.0 <= v < 2.0.0",
+        "elm-lang/core": "4.0.0 <= v < 5.0.0",
+        "elm-lang/html": "1.0.0 <= v < 2.0.0",
+        "elm-lang/keyboard": "1.0.0 <= v < 2.0.0",
+        "evancz/elm-graphics": "1.0.0 <= v < 2.0.0"
+    },
+    "elm-version": "0.17.0 <= v < 0.18.0"
+}
