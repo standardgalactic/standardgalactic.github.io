@@ -43,6 +43,7 @@
         <li>HL: Warp left and right</li>
         <li>JK: Zip down and up </li>
         <li>Z: Toggle Standard Galactic</li>
+        <li>X: Toggle Labels</li>
         <li>G: Global Reset</li>
         
         <!-- Add any additional controls here -->
@@ -103,13 +104,15 @@ function resetControlPanelTimeout() {
             leftRotate: false, rightRotate: false,
             leftView: false, downView: false,
             upView: false, rightView: false
+
+            showLabels: true, 
         };
 
         let viewRotationX = 0;   // Rotation for h and l
         let viewRotationY = 0;   // Rotation for j and k
     
         function draw() {
-                      context.fillStyle = "#000000";
+            context.fillStyle = "#000000";
             context.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let bubble of bubbles) {
@@ -122,7 +125,7 @@ function resetControlPanelTimeout() {
 
                 if (bubble.isFocused) {
                     context.fillStyle = "#FF0000";
-                    context.fillText("Planetary Brake Activating!!", canvas.width / 2 - 100, 30);
+                    context.fillText("Planetary Brake Activating!", canvas.width / 2 - 100, 30);
                 }
 
                 context.strokeStyle = "#ffffff";
@@ -132,7 +135,7 @@ function resetControlPanelTimeout() {
                 context.fill();
                 context.closePath();
                 context.stroke();
-                if (scale > 0.1) {
+                if (scale > 0.1 && controls.showLabel) {
                     context.fillStyle = "#ffffff";
                     context.fillText(bubble.word, x, y);
                 }
@@ -233,9 +236,12 @@ function resetControlPanelTimeout() {
                 case 'f':
                     controls.downView = true;
                     break;
-           case 'h':
-            viewRotationX -= 0.05;   // You can adjust the value for a faster or slower rotation
-            break;
+                case 'x': // Toggle the labels
+                    controls.showLabels = !controls.showLabels;
+                    break;
+                case 'h':
+                    viewRotationX -= 0.05;   // You can adjust the value for a faster or slower rotation
+                    break;
         case 'l':
             viewRotationX += 0.05;
             break;
