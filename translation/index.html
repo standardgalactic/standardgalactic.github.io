@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Translation Test</title>
+    <style>
+        .image-container {
+            position: relative;
+            width: 600px;
+            margin: 20px auto;
+            overflow: hidden; /* Add this to hide any overflow */
+        }
+        .image-container img {
+            width: 100%;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        .image-container img.top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        .image-container:hover img.top {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="image-container">
+    <img src="../sga/vim-01.png" alt="vim-01">
+    <img src="../sga/vim-01b.png" class="top" alt="vim-01b">
+</div>
+
+<div class="image-container">
+    <img src="../sga/vim-02.png" alt="vim-02">
+    <img src="../sga/vim-02b.png" class="top" alt="vim-02b">
+</div>
+
+<div class="image-container">
+    <img src="../sga/vim-03.png" alt="vim-03">
+    <img src="../sga/vim-03b.png" class="top" alt="vim-03b">
+</div>
+
+<script>
+    window.onload = function() {
+        var containers = document.getElementsByClassName('image-container');
+        for (var i = 0; i < containers.length; i++) {
+            var images = containers[i].getElementsByTagName('img');
+            var height = 0;
+            for (var j = 0; j < images.length; j++) {
+                if (images[j].height > height) {
+                    height = images[j].height;
+                }
+            }
+            containers[i].style.height = height + 'px';
+        }
+    };
+</script>
+
+</body>
+</html>
