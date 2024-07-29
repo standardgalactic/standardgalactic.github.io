@@ -10,6 +10,7 @@ And [Typing Tutor](https://standardgalactic.github.io/typing-tutor)
 Coming soon: 3d Programming Language
 [Spherepop](https://standardgalactic.github.io/spherepop.html)
 
+![](banner.png)
 <!--
 ![](sga-sample.png)
 ![](sga-sample-02.png)
