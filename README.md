@@ -7,6 +7,10 @@ And [Typing Tutor](https://standardgalactic.github.io/typing-tutor)
 
 ![](galactic-typing-tutor.png)
 
+Play [Chrobatos](https://standardgalactic.github.io/chrobatos.html)
+
+![](chrobatos-preview.png)
+
 Coming soon: 3d Programming Language
 [Spherepop](https://standardgalactic.github.io/spherepop.html)
 
