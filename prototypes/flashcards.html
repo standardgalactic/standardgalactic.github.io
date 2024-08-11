@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latin Flashcards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .flashcard-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: auto;
+            max-width: 600px;
+        }
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .choice {
+            padding: 10px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .choice:hover {
+            background-color: #e2e6ea;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Latin Flashcards</h1>
+    <div class="flashcard-container">
+        <div class="question" id="question">What is the Latin word for "water"?</div>
+        <div class="choices">
+            <div class="choice" onclick="checkAnswer(this)">Aqua</div>
+            <div class="choice" onclick="checkAnswer(this)">Ignis</div>
+            <div class="choice" onclick="checkAnswer(this)">Terra</div>
+            <div class="choice" onclick="checkAnswer(this)">Caelum</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
