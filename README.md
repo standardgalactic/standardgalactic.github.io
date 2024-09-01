@@ -11,8 +11,14 @@ Play [Chrobatos](https://standardgalactic.github.io/chrobatos.html)
 
 ![](chrobatos-preview.png)
 
-Coming soon: 3d Programming Language
+Coming soon:
+
+3d Programming Language
 [Spherepop](https://standardgalactic.github.io/spherepop.html)
+
+Cosmic Web Simulator
+[Centerfuge](https://standardgalactic.github.io/Centerfuge)
+
 
 ![](banner.png)
 <!--
