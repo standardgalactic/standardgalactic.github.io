@@ -11,6 +11,8 @@ Play [Chrobatos](https://standardgalactic.github.io/chrobatos.html)
 
 ![](chrobatos-preview.png)
 
+And [Color Radio](https://standardgalactic.github.io/color-radio.html)
+
 Coming soon:
 
 3d Programming Language
