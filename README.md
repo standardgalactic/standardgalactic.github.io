@@ -1,10 +1,11 @@
 # Standard Galactic
 
+<!--
 ![Cluster Analysis](facebook-brain-Dec-2012.jpg)
 ![Wordcloud](facebook-wordcloud-Nov-2015.jpg)
 ![Wordcloud](facebook-wordcloud-Aug-2017.jpg)
 ![Wordcloud](facebook-wordcloud-Feb-2019.jpg)
-
+-->
 Try the [Galactic Translator](https://standardgalactic.github.io/sga-converter.html)
 
 And [Typing Tutor](https://standardgalactic.github.io/typing-tutor)
@@ -25,6 +26,7 @@ Coming soon:
 Cosmic Web Simulator
 [Centerfuge](https://standardgalactic.github.io/Centerfuge)
 
+![](spherepop-example-dark-mode.png)
 
 ![](banner.png)
 <!--
