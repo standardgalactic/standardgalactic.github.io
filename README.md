@@ -1,10 +1,10 @@
 # Standard Galactic
 
 ## Spherepop Demo
-[](demonstration-00.jpg)
-[](demonstration-01.jpg)
-[](demonstration-02.jpg)
-[](demonstration-03.jpg)
+![](demonstration-00.jpg)
+![](demonstration-01.jpg)
+![](demonstration-02.jpg)
+![](demonstration-03.jpg)
 
 <!--
 ![Cluster Analysis](facebook-brain-Dec-2012.jpg)
