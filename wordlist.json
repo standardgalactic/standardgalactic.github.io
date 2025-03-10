@@ -1,0 +1,40 @@
+[
+{ "command": "bug", "definition": "start a bug report" },
+
+{ "command": "build", "definition": "compile packages and dependencies" },
+
+{ "command": "clean", "definition": "remove object files and cached files" },
+
+{ "command": "doc", "definition": "show documentation for package or symbol" },
+
+{ "command": "env", "definition": "print Go environment information" },
+
+{ "command": "fix", "definition": "update packages to use new APIs" },
+
+{ "command": "fmt", "definition": "gofmt (reformat) package sources" },
+
+{ "command": "generate", "definition": "generate Go files by processing source" },
+
+{ "command": "get", "definition": "add dependencies to current module and install them" },
+
+{ "command": "install", "definition": "compile and install packages and dependencies" },
+
+{ "command": "list", "definition": "list packages or modules" },
+
+{ "command": "mod", "definition": "module maintenance" },
+
+{ "command": "work", "definition": "workspace maintenance" },
+
+{ "command": "run", "definition": "compile and run Go program" },
+
+{ "command": "test", "definition": "test packages" },
+
+{ "command": "tool", "definition": "run specified go tool" },
+
+{ "command": "version", "definition": "print Go version" },
+
+{ "command": "vet", "definition": "report likely mistakes in packages" },
+
+{ "command": "help build", "definition": "show help on build" }
+]
+
