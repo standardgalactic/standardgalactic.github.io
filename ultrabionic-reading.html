@@ -95,7 +95,8 @@
         <div class="experiment-output" id="pitchOutput"></div>
       </div>
 
-      <!-- Section 3: Font Infection Experiment -->
+      <!--
+Section 3: Font Infection Experiment 
       <div class="section" id="infectionSection">
         <h2>Font Infection Experiment</h2>
         <p>
@@ -111,6 +112,7 @@ Further adjustments or debugging may be required. </tag>
         </div>
         <div class="experiment-output" id="infectionOutput"></div>
       </div>
+-->
 
       <!-- Section 4: Animated Experiments -->
       <div class="section" id="animatedSection">
@@ -205,7 +207,7 @@ Further adjustments or debugging may be required. </tag>
         container.appendChild(p);
       });
     }
-// Experiment 3: Font Infection with Logistic Curve
+/* // Experiment 3: Font Infection with Logistic Curve
 function renderInfectionExperiment(infectionRate, containerId = "infectionOutput") {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -232,7 +234,7 @@ function renderInfectionExperiment(infectionRate, containerId = "infectionOutput
     container.appendChild(p);
   });
 }
-
+*/
 
 
 
@@ -262,7 +264,7 @@ function renderInfectionExperiment(infectionRate, containerId = "infectionOutput
     updateDisplay("pitchAmplitudeValue", pitchAmplitudeSlider.value);
     renderPitchExperiment(parseFloat(pitchAmplitudeSlider.value));
 
-    // Infection Experiment Slider
+   /*  // Infection Experiment Slider
     const infectionRateSlider = document.getElementById('infectionRateSlider');
     infectionRateSlider.addEventListener('input', function() {
       let rate = parseFloat(this.value);
@@ -271,7 +273,7 @@ function renderInfectionExperiment(infectionRate, containerId = "infectionOutput
     });
     updateDisplay("infectionRateValue", infectionRateSlider.value);
     renderInfectionExperiment(parseFloat(infectionRateSlider.value));
-
+*/
 
     // --- Animated Experiments ---
     let animating = false;
@@ -299,10 +301,10 @@ function renderInfectionExperiment(infectionRate, containerId = "infectionOutput
       let pitchAmplitude = parseFloat(pitchAmplitudeSlider.value);
       renderPitchExperiment(pitchAmplitude, animationTime, "animatedPitchOutput");
 
-      // Animated Infection Experiment: oscillate infection rate between 0 and 1.
+   /*   // Animated Infection Experiment: oscillate infection rate between 0 and 1.
       let infectionRate = (Math.sin(animationTime) + 1) / 2;
       updateDisplay("infectionRateValue", infectionRate.toFixed(2));
-      renderInfectionExperiment(infectionRate, "animatedInfectionOutput");
+      renderInfectionExperiment(infectionRate, "animatedInfectionOutput"); */
 
       requestAnimationFrame(animate);
     }
