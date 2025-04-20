@@ -1,11 +1,12 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-# === Configuration ===
+# configuration ===
+
 grid_size = 5  # 5x5 to match "IRON GOLD STONE GATE HEAD HOME"
 cell_size = 64
-text = "IRON GOLD STONE GATE HEAD HOME".replace(" ", "")
+text = "TYSO NTYS ONTYS ONTY SONTY SONT".replace(" ", "")
 font_path = "fonts/NovaMonoStandardGalactic.ttf"  # Make sure this path is correct
-output_path = "instructions.png"
+output_path = "tyson-grid.png"
 image_size = grid_size * cell_size
 
 # === Create base images ===
