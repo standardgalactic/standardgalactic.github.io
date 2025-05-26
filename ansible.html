@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ansible</title>
+  <style>
+    body {
+      background-color: #1C1C1D;
+      color: #FFF;
+      margin: 0;
+      padding: 1rem;
+      font-family: SGA-Regular;
+    }
+    #headingContainer {
+      height: auto;
+      position: relative;
+      margin-bottom: 20px;
+      background-color: #1C1C1D;
+      border: 0px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6em;
+    }
+
+    #title {
+      margin: 0;
+      position: static;
+      width: 100%;
+      text-align: center;
+      transition: none;
+    }
+
+    /* Decipher button styling */
+    #decipherBtn {
+      background: #28282a;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 0.4em;
+      padding: 0.35em 0.9em;
+      font-size: 1em;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+      margin-top: 0.2em;
+    }
+    #decipherBtn:hover {
+      background: #35353a;
+      color: #e6e600;
+    }
+
+    .ansible-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0px;
+    }
+
+    .ansible-container img {
+      max-width: 80%;
+      border: 0px solid #ccc;
+    }
+
+    @font-face {
+      font-family: "Sga Regular";
+      src: url("fonts/Sga-Regular.woff2") format("woff2"),
+           url("fonts/Sga-Regular.woff")  format("woff"),
+           url("fonts/Sga-Regular.ttf")   format("truetype");
+    }
+    @font-face {
+      font-family: "CursiveGalactic Regular";
+      src: url("fonts/CursiveGalactic-Regular.g2n") format("opentype"),
+           url("fonts/CursiveGalactic-Regular.ttf") format("truetype");
+    }
+    @font-face {
+      font-family: "Clypto Regular";
+      src: url("fonts/Clypto-Regular.woff2") format("woff2"),
+           url("fonts/Clypto-Regular.woff")  format("woff"),
+           url("fonts/Clypto-Regular.ttf")   format("truetype");
+    }
+  </style>
+</head>
+<body>
+
+  <div id="headingContainer">
+    <h1 id="title">Year in Review - 2025 (so far)</h1>
+    <button id="decipherBtn" type="button">Decipher</button>
+  </div>
+
+  <div class="ansible-container">
+    <img src="ansible-01.png" alt="Ansible 01" />
+    <img src="ansible-02.png" alt="Ansible 02" />
+    <img src="ansible-03.png" alt="Ansible 03" />
+    <img src="ansible-04.png" alt="Ansible 04" />
+    <img src="ansible-05.png" alt="Ansible 05" />
+  </div>
+
+  <script>
+    // Font cycling logic
+    const fonts = [
+      "Sga Regular",
+      "CursiveGalactic Regular",
+      "Clypto Regular",
+      "Courier"
+    ];
+
+    let currentFontIndex = 0;
+    const titleElement = document.getElementById("title");
+
+    function changeFont() {
+      currentFontIndex = (currentFontIndex + 1) % fonts.length;
+      const newFont = fonts[currentFontIndex];
+
+      if (newFont === "Courier") {
+        titleElement.style.fontSize = "1.4em";
+      } else {
+        titleElement.style.fontSize = "2em";
+      }
+
+      titleElement.style.fontFamily = newFont;
+    }
+
+    setInterval(changeFont, 2500);
+
+    // Decipher button logic
+    const decipherBtn = document.getElementById("decipherBtn");
+    const ansibleContainer = document.querySelector('.ansible-container');
+    let deciphered = false;
+
+    decipherBtn.addEventListener('click', () => {
+      const imgs = ansibleContainer.querySelectorAll('img');
+      imgs.forEach((img, idx) => {
+        let num = (idx + 1).toString().padStart(2, '0');
+        if (!deciphered) {
+          img.src = img.src.replace(/ansible-(\d\d)\.png$/, `translation-${num}.png`);
+          img.alt = img.alt.replace(/Ansible (\d+)/, `Translation $1`);
+        } else {
+          img.src = img.src.replace(/translation-(\d\d)\.png$/, `ansible-${num}.png`);
+          img.alt = img.alt.replace(/Translation (\d+)/, `Ansible $1`);
+        }
+      });
+      deciphered = !deciphered;
+      decipherBtn.textContent = deciphered ? "Show Original" : "Decipher";
+    });
+  </script>
+</body>
+</html>
