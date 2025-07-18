@@ -88,11 +88,12 @@
   </div>
 
   <div class="ansible-container">
-    <img src="ansible-01.png" alt="Ansible 01" />
-    <img src="ansible-02.png" alt="Ansible 02" />
-    <img src="ansible-03.png" alt="Ansible 03" />
-    <img src="ansible-04.png" alt="Ansible 04" />
-    <img src="ansible-05.png" alt="Ansible 05" />
+    <img src="wall-01.png" alt="Ansible 01" />
+    <img src="wall-02.png" alt="Ansible 02" />
+    <img src="wall-03.png" alt="Ansible 03" />
+    <img src="wall-04.png" alt="Ansible 04" />
+    <img src="wall-05.png" alt="Ansible 05" />
+    <img src="wall-06.png" alt="Ansible 06" />
   </div>
 
   <script>
@@ -122,7 +123,7 @@
 
     setInterval(changeFont, 2500);
 
-    // Decipher button logic
+    // Decipher button logic (toggle wall/deciphered images)
     const decipherBtn = document.getElementById("decipherBtn");
     const ansibleContainer = document.querySelector('.ansible-container');
     let deciphered = false;
@@ -132,11 +133,11 @@
       imgs.forEach((img, idx) => {
         let num = (idx + 1).toString().padStart(2, '0');
         if (!deciphered) {
-          img.src = img.src.replace(/ansible-(\d\d)\.png$/, `translation-${num}.png`);
-          img.alt = img.alt.replace(/Ansible (\d+)/, `Translation $1`);
+          img.src = `wall-${num}.png`;
+          img.alt = `Wall ${num}`;
         } else {
-          img.src = img.src.replace(/translation-(\d\d)\.png$/, `ansible-${num}.png`);
-          img.alt = img.alt.replace(/Translation (\d+)/, `Ansible $1`);
+          img.src = `wall-${num}.png`;
+          img.alt = `Wall ${num}`;
         }
       });
       deciphered = !deciphered;

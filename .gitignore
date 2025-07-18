@@ -8,4 +8,6 @@
 *.vtt
 *.json
 
+web/
+
 !wordlist.json
