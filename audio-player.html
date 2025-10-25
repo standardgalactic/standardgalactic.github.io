@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Better Than Human — Glitch Turntable Player</title>
+  <title>Better Than Human — Flyxion</title>
   <style>
     body {
       margin: 0;
@@ -22,11 +22,9 @@
       border-radius: 50%;
       background: radial-gradient(circle at center, #111 0%, #000 100%);
       box-shadow: 0 0 20px #fff1;
-      cursor: grab;
       transition: transform 0.05s;
     }
     canvas:active {
-      cursor: grabbing;
       transform: scale(0.98);
     }
     .controls {
@@ -45,15 +43,25 @@
       text-transform: uppercase;
     }
     button:hover { background: #181818; }
+    .glitch-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
   </style>
 </head>
 <body>
-  <h2>Better Than Human — Ian McEwan</h2>
+  <h2>Better Than Human — Flyxion</h2>
+  <p style="opacity:0.6;font-size:0.9em;margin-top:-10px;">Inspired by <i>Machines Like Me</i> by Ian McEwan</p>
   <canvas id="turntable"></canvas>
   <div class="controls">
     <button id="play">Play</button>
     <button id="pause">Pause</button>
-  </div><audio id="audio" src="Better Than Human.mp3" crossorigin="Flyxion"></audio>
+  </div>
+  <div class="glitch-overlay" id="glitch"></div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
 
   <script>
     const audio = document.getElementById('audio');
@@ -61,52 +69,69 @@
     const pauseBtn = document.getElementById('pause');
     const canvas = document.getElementById('turntable');
     const ctx = canvas.getContext('2d');
+    const glitch = document.getElementById('glitch');
 
     let rotation = 0;
     let isDragging = false;
     let lastAngle = 0;
-    let velocity = 0;
+    let pulseAlpha = 0;
 
     const dpr = window.devicePixelRatio || 1;
     canvas.width = 320 * dpr;
     canvas.height = 320 * dpr;
     ctx.scale(dpr, dpr);
 
-    // Vinyl noise generator
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctxAudio = new AudioContext();
     const src = ctxAudio.createMediaElementSource(audio);
     const gainNode = ctxAudio.createGain();
-    src.connect(gainNode);
-    gainNode.connect(ctxAudio.destination);
+    const analyser = ctxAudio.createAnalyser();
+    analyser.fftSize = 256;
 
-    // Static vinyl hiss
+    src.connect(gainNode);
+    gainNode.connect(analyser);
+    analyser.connect(ctxAudio.destination);
+
+    // Subtle vinyl hiss
     const noiseBuffer = ctxAudio.createBuffer(1, ctxAudio.sampleRate * 2, ctxAudio.sampleRate);
     const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.05;
-    }
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.03;
     const noise = ctxAudio.createBufferSource();
     noise.buffer = noiseBuffer;
     const noiseGain = ctxAudio.createGain();
-    noiseGain.gain.value = 0.03;
+    noiseGain.gain.value = 0.02;
     noise.loop = true;
     noise.connect(noiseGain).connect(ctxAudio.destination);
     noise.start();
 
-    // Scratch burst generator with velocity-dependent intensity
-    function scratchNoise(intensity = 0.05) {
-      const osc = ctxAudio.createOscillator();
-      const gn = ctxAudio.createGain();
-      osc.type = 'square';
-      const freq = 200 + Math.random() * 800 * intensity;
-      osc.frequency.setValueAtTime(freq, ctxAudio.currentTime);
-      const gainVal = Math.min(0.2, 0.02 + intensity * 0.3);
-      gn.gain.setValueAtTime(gainVal, ctxAudio.currentTime);
-      gn.gain.exponentialRampToValueAtTime(0.001, ctxAudio.currentTime + 0.05);
-      osc.connect(gn).connect(ctxAudio.destination);
-      osc.start();
-      osc.stop(ctxAudio.currentTime + 0.05);
+    const freqData = new Uint8Array(analyser.frequencyBinCount);
+    let vibTimer = 0;
+    let pulseIntensity = 0;
+
+    function detectBeat() {
+      analyser.getByteFrequencyData(freqData);
+      let bass = 0;
+      for (let i = 0; i < 16; i++) bass += freqData[i];
+      bass /= 16;
+      const now = Date.now();
+      pulseIntensity = Math.min(1, bass / 200);
+
+      if (bass > 160 && now - vibTimer > 250) {
+        if (navigator.vibrate) navigator.vibrate(10);
+        vibTimer = now;
+        pulseAlpha = 0.8;
+        triggerGlitch(bass);
+      }
+      pulseAlpha *= 0.93;
+      requestAnimationFrame(detectBeat);
+    }
+
+    function triggerGlitch(bass) {
+      if (Math.random() < 0.4) {
+        glitch.style.opacity = Math.min(0.5, bass / 300);
+        glitch.style.filter = `contrast(${1 + Math.random() * 0.5}) brightness(${1 + Math.random() * 0.5})`;
+        setTimeout(() => { glitch.style.opacity = 0; }, 100 + Math.random() * 150);
+      }
     }
 
     function drawTurntable() {
@@ -115,14 +140,20 @@
       ctx.translate(160, 160);
       ctx.rotate(rotation);
 
-      // Outer ring
+      if (pulseAlpha > 0.01) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 155, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255,255,255,${pulseAlpha})`;
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
+
       ctx.strokeStyle = '#e6e6e6';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(0, 0, 150, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Grooves
       for (let i = 120; i > 20; i -= 5) {
         ctx.strokeStyle = `rgba(255,255,255,${0.01 + i/600})`;
         ctx.beginPath();
@@ -130,60 +161,55 @@
         ctx.stroke();
       }
 
-      // Center label
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(0, 0, 25, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.restore();
     }
 
     function animate() {
-      if (!isDragging && !audio.paused) rotation += 0.02;
-      else rotation += velocity * 0.02;
+      if (!isDragging) rotation += 0.02;
       drawTurntable();
       requestAnimationFrame(animate);
     }
 
-    canvas.addEventListener('mousedown', (e) => {
+    function getAngle(e, rect) {
+      const touch = e.touches ? e.touches[0] : e;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = touch.clientX - cx;
+      const dy = touch.clientY - cy;
+      return Math.atan2(dy, dx);
+    }
+
+    function startDrag(e) {
       isDragging = true;
       const rect = canvas.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      lastAngle = Math.atan2(dy, dx);
-      audio.pause();
-    });
+      lastAngle = getAngle(e, rect);
+    }
 
-    window.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        if (Math.abs(velocity) > 0.01) audio.play();
-      }
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
+    function moveDrag(e) {
       if (!isDragging) return;
       const rect = canvas.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      const angle = Math.atan2(dy, dx);
+      const angle = getAngle(e, rect);
       let delta = angle - lastAngle;
       if (delta > Math.PI) delta -= Math.PI * 2;
       if (delta < -Math.PI) delta += Math.PI * 2;
       rotation += delta;
-      velocity = delta * 10;
-      audio.currentTime += delta * 5;
-      const intensity = Math.min(1, Math.abs(delta) * 40);
-      scratchNoise(intensity);
       lastAngle = angle;
-    });
+    }
 
-    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); };
+    function endDrag() { isDragging = false; }
+
+    canvas.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('touchstart', startDrag, {passive:true});
+    window.addEventListener('touchmove', moveDrag, {passive:true});
+    window.addEventListener('touchend', endDrag, {passive:true});
+
+    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); detectBeat(); };
     pauseBtn.onclick = () => audio.pause();
 
     animate();
