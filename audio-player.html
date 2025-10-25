@@ -31,6 +31,7 @@
       margin-top: 20px;
       display: flex;
       gap: 10px;
+      align-items: center;
     }
     button {
       background: #111;
@@ -43,13 +44,11 @@
       text-transform: uppercase;
     }
     button:hover { background: #181818; }
-    .glitch-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 4px);
-      opacity: 0;
-      transition: opacity 0.1s;
+    .timer {
+      font-size: 1.2em;
+      letter-spacing: 1px;
+      min-width: 80px;
+      text-align: center;
     }
   </style>
 </head>
@@ -60,16 +59,18 @@
   <div class="controls">
     <button id="play">Play</button>
     <button id="pause">Pause</button>
-  </div>
-  <div class="glitch-overlay" id="glitch"></div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
+    <div class="timer" id="timer">00:00</div>
+    <button id="loop">Loop: Off</button>
+  </div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
 
   <script>
     const audio = document.getElementById('audio');
     const playBtn = document.getElementById('play');
     const pauseBtn = document.getElementById('pause');
+    const loopBtn = document.getElementById('loop');
+    const timer = document.getElementById('timer');
     const canvas = document.getElementById('turntable');
     const ctx = canvas.getContext('2d');
-    const glitch = document.getElementById('glitch');
 
     let rotation = 0;
     let isDragging = false;
@@ -84,55 +85,7 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctxAudio = new AudioContext();
     const src = ctxAudio.createMediaElementSource(audio);
-    const gainNode = ctxAudio.createGain();
-    const analyser = ctxAudio.createAnalyser();
-    analyser.fftSize = 256;
-
-    src.connect(gainNode);
-    gainNode.connect(analyser);
-    analyser.connect(ctxAudio.destination);
-
-    // Subtle vinyl hiss
-    const noiseBuffer = ctxAudio.createBuffer(1, ctxAudio.sampleRate * 2, ctxAudio.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.03;
-    const noise = ctxAudio.createBufferSource();
-    noise.buffer = noiseBuffer;
-    const noiseGain = ctxAudio.createGain();
-    noiseGain.gain.value = 0.02;
-    noise.loop = true;
-    noise.connect(noiseGain).connect(ctxAudio.destination);
-    noise.start();
-
-    const freqData = new Uint8Array(analyser.frequencyBinCount);
-    let vibTimer = 0;
-    let pulseIntensity = 0;
-
-    function detectBeat() {
-      analyser.getByteFrequencyData(freqData);
-      let bass = 0;
-      for (let i = 0; i < 16; i++) bass += freqData[i];
-      bass /= 16;
-      const now = Date.now();
-      pulseIntensity = Math.min(1, bass / 200);
-
-      if (bass > 160 && now - vibTimer > 250) {
-        if (navigator.vibrate) navigator.vibrate(10);
-        vibTimer = now;
-        pulseAlpha = 0.8;
-        triggerGlitch(bass);
-      }
-      pulseAlpha *= 0.93;
-      requestAnimationFrame(detectBeat);
-    }
-
-    function triggerGlitch(bass) {
-      if (Math.random() < 0.4) {
-        glitch.style.opacity = Math.min(0.5, bass / 300);
-        glitch.style.filter = `contrast(${1 + Math.random() * 0.5}) brightness(${1 + Math.random() * 0.5})`;
-        setTimeout(() => { glitch.style.opacity = 0; }, 100 + Math.random() * 150);
-      }
-    }
+    src.connect(ctxAudio.destination);
 
     function drawTurntable() {
       ctx.clearRect(0, 0, 320, 320);
@@ -140,6 +93,7 @@
       ctx.translate(160, 160);
       ctx.rotate(rotation);
 
+      // Outer glow ring
       if (pulseAlpha > 0.01) {
         ctx.beginPath();
         ctx.arc(0, 0, 155, 0, Math.PI * 2);
@@ -148,12 +102,14 @@
         ctx.stroke();
       }
 
+      // Outer ring
       ctx.strokeStyle = '#e6e6e6';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(0, 0, 150, 0, Math.PI * 2);
       ctx.stroke();
 
+      // Grooves
       for (let i = 120; i > 20; i -= 5) {
         ctx.strokeStyle = `rgba(255,255,255,${0.01 + i/600})`;
         ctx.beginPath();
@@ -161,6 +117,7 @@
         ctx.stroke();
       }
 
+      // Center label
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(0, 0, 25, 0, Math.PI * 2);
@@ -169,11 +126,33 @@
     }
 
     function animate() {
-      if (!isDragging) rotation += 0.02;
+      rotation += 0.02;
       drawTurntable();
       requestAnimationFrame(animate);
     }
 
+    // Timer countdown display
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function updateTimer() {
+      if (audio.duration) {
+        const remaining = Math.max(0, audio.duration - audio.currentTime);
+        timer.textContent = formatTime(remaining);
+      }
+      requestAnimationFrame(updateTimer);
+    }
+
+    // Loop button
+    loopBtn.onclick = () => {
+      audio.loop = !audio.loop;
+      loopBtn.textContent = `Loop: ${audio.loop ? 'On' : 'Off'}`;
+    };
+
+    // Touch rotation logic
     function getAngle(e, rect) {
       const touch = e.touches ? e.touches[0] : e;
       const cx = rect.left + rect.width / 2;
@@ -209,9 +188,10 @@
     window.addEventListener('touchmove', moveDrag, {passive:true});
     window.addEventListener('touchend', endDrag, {passive:true});
 
-    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); detectBeat(); };
+    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); };
     pauseBtn.onclick = () => audio.pause();
 
     animate();
+    updateTimer();
   </script></body>
 </html>
