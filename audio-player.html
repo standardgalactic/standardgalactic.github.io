@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Better Than Human — Glitch Turntable Player</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #0a0a0a;
+      color: #e6e6e6;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    canvas {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      box-shadow: 0 0 20px #fff1;
+      cursor: grab;
+      transition: transform 0.05s;
+    }
+    canvas:active {
+      cursor: grabbing;
+      transform: scale(0.98);
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      background: #111;
+      border: 1px solid #333;
+      color: #eee;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    button:hover { background: #181818; }
+  </style>
+</head>
+<body>
+  <h2>Better Than Human — Ian McEwan</h2>
+  <canvas id="turntable"></canvas>
+  <div class="controls">
+    <button id="play">Play</button>
+    <button id="pause">Pause</button>
+  </div><audio id="audio" src="Better Than Human.mp3" crossorigin="Flyxion"></audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const pauseBtn = document.getElementById('pause');
+    const canvas = document.getElementById('turntable');
+    const ctx = canvas.getContext('2d');
+
+    let rotation = 0;
+    let isDragging = false;
+    let lastAngle = 0;
+    let velocity = 0;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = 320 * dpr;
+    canvas.height = 320 * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Vinyl noise generator
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctxAudio = new AudioContext();
+    const src = ctxAudio.createMediaElementSource(audio);
+    const gainNode = ctxAudio.createGain();
+    src.connect(gainNode);
+    gainNode.connect(ctxAudio.destination);
+
+    // Static vinyl hiss
+    const noiseBuffer = ctxAudio.createBuffer(1, ctxAudio.sampleRate * 2, ctxAudio.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.05;
+    }
+    const noise = ctxAudio.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const noiseGain = ctxAudio.createGain();
+    noiseGain.gain.value = 0.03;
+    noise.loop = true;
+    noise.connect(noiseGain).connect(ctxAudio.destination);
+    noise.start();
+
+    // Scratch burst generator with velocity-dependent intensity
+    function scratchNoise(intensity = 0.05) {
+      const osc = ctxAudio.createOscillator();
+      const gn = ctxAudio.createGain();
+      osc.type = 'square';
+      const freq = 200 + Math.random() * 800 * intensity;
+      osc.frequency.setValueAtTime(freq, ctxAudio.currentTime);
+      const gainVal = Math.min(0.2, 0.02 + intensity * 0.3);
+      gn.gain.setValueAtTime(gainVal, ctxAudio.currentTime);
+      gn.gain.exponentialRampToValueAtTime(0.001, ctxAudio.currentTime + 0.05);
+      osc.connect(gn).connect(ctxAudio.destination);
+      osc.start();
+      osc.stop(ctxAudio.currentTime + 0.05);
+    }
+
+    function drawTurntable() {
+      ctx.clearRect(0, 0, 320, 320);
+      ctx.save();
+      ctx.translate(160, 160);
+      ctx.rotate(rotation);
+
+      // Outer ring
+      ctx.strokeStyle = '#e6e6e6';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 150, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Grooves
+      for (let i = 120; i > 20; i -= 5) {
+        ctx.strokeStyle = `rgba(255,255,255,${0.01 + i/600})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, i, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Center label
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(0, 0, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function animate() {
+      if (!isDragging && !audio.paused) rotation += 0.02;
+      else rotation += velocity * 0.02;
+      drawTurntable();
+      requestAnimationFrame(animate);
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      lastAngle = Math.atan2(dy, dx);
+      audio.pause();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        if (Math.abs(velocity) > 0.01) audio.play();
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const angle = Math.atan2(dy, dx);
+      let delta = angle - lastAngle;
+      if (delta > Math.PI) delta -= Math.PI * 2;
+      if (delta < -Math.PI) delta += Math.PI * 2;
+      rotation += delta;
+      velocity = delta * 10;
+      audio.currentTime += delta * 5;
+      const intensity = Math.min(1, Math.abs(delta) * 40);
+      scratchNoise(intensity);
+      lastAngle = angle;
+    });
+
+    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); };
+    pauseBtn.onclick = () => audio.pause();
+
+    animate();
+  </script></body>
+</html>
