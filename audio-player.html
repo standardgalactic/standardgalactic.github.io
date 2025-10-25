@@ -49,6 +49,16 @@
       letter-spacing: 1px;
       min-width: 80px;
       text-align: center;
+      transition: opacity 0.1s, filter 0.1s;
+    }
+    .glitch-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 4px);
+      opacity: 0;
+      transition: opacity 0.1s, filter 0.1s;
+      mix-blend-mode: screen;
     }
   </style>
 </head>
@@ -61,7 +71,8 @@
     <button id="pause">Pause</button>
     <div class="timer" id="timer">00:00</div>
     <button id="loop">Loop: Off</button>
-  </div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
+  </div>
+  <div class="glitch-overlay" id="glitch"></div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
 
   <script>
     const audio = document.getElementById('audio');
@@ -71,6 +82,7 @@
     const timer = document.getElementById('timer');
     const canvas = document.getElementById('turntable');
     const ctx = canvas.getContext('2d');
+    const glitch = document.getElementById('glitch');
 
     let rotation = 0;
     let isDragging = false;
@@ -85,7 +97,36 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctxAudio = new AudioContext();
     const src = ctxAudio.createMediaElementSource(audio);
-    src.connect(ctxAudio.destination);
+    const analyser = ctxAudio.createAnalyser();
+    analyser.fftSize = 256;
+    src.connect(analyser);
+    analyser.connect(ctxAudio.destination);
+
+    // Reactive glitch overlay
+    const freqData = new Uint8Array(analyser.frequencyBinCount);
+    function glitchEffect() {
+      analyser.getByteFrequencyData(freqData);
+      let bass = 0;
+      for (let i = 0; i < 32; i++) bass += freqData[i];
+      bass /= 32;
+      const brightness = Math.min(1, bass / 180);
+
+      if (brightness > 0.2) {
+        glitch.style.opacity = brightness;
+        glitch.style.filter = `contrast(${1 + brightness * 1.5}) brightness(${1 + brightness})`;
+        glitch.style.background = Math.random() > 0.5
+          ? 'repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 3px)'
+          : 'repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px)';
+        // Timer flicker synced to glitch
+        timer.style.opacity = 0.7 + Math.random() * 0.3;
+        timer.style.filter = `contrast(${1 + brightness}) brightness(${1 + brightness * 0.5})`;
+      } else {
+        glitch.style.opacity = 0;
+        timer.style.opacity = 1;
+        timer.style.filter = 'none';
+      }
+      requestAnimationFrame(glitchEffect);
+    }
 
     function drawTurntable() {
       ctx.clearRect(0, 0, 320, 320);
@@ -93,23 +134,12 @@
       ctx.translate(160, 160);
       ctx.rotate(rotation);
 
-      // Outer glow ring
-      if (pulseAlpha > 0.01) {
-        ctx.beginPath();
-        ctx.arc(0, 0, 155, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255,255,255,${pulseAlpha})`;
-        ctx.lineWidth = 6;
-        ctx.stroke();
-      }
-
-      // Outer ring
       ctx.strokeStyle = '#e6e6e6';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.arc(0, 0, 150, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Grooves
       for (let i = 120; i > 20; i -= 5) {
         ctx.strokeStyle = `rgba(255,255,255,${0.01 + i/600})`;
         ctx.beginPath();
@@ -117,7 +147,6 @@
         ctx.stroke();
       }
 
-      // Center label
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(0, 0, 25, 0, Math.PI * 2);
@@ -152,7 +181,7 @@
       loopBtn.textContent = `Loop: ${audio.loop ? 'On' : 'Off'}`;
     };
 
-    // Touch rotation logic
+    // Turntable rotation drag
     function getAngle(e, rect) {
       const touch = e.touches ? e.touches[0] : e;
       const cx = rect.left + rect.width / 2;
@@ -188,7 +217,7 @@
     window.addEventListener('touchmove', moveDrag, {passive:true});
     window.addEventListener('touchend', endDrag, {passive:true});
 
-    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); };
+    playBtn.onclick = () => { ctxAudio.resume(); audio.play(); glitchEffect(); };
     pauseBtn.onclick = () => audio.pause();
 
     animate();
