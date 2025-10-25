@@ -17,11 +17,11 @@
       overflow: hidden;
     }
     canvas {
-      width: 320px;
-      height: 320px;
+      width: 340px;
+      height: 340px;
       border-radius: 50%;
       background: radial-gradient(circle at center, #111 0%, #000 100%);
-      box-shadow: 0 0 20px #fff1;
+      box-shadow: 0 0 25px #fff1;
       transition: transform 0.05s;
     }
     canvas:active {
@@ -60,6 +60,26 @@
       transition: opacity 0.1s, filter 0.1s;
       mix-blend-mode: screen;
     }
+    #lyrics {
+      display: none;
+      white-space: pre-wrap;
+      text-align: center;
+      margin-top: 20px;
+      max-width: 600px;
+      font-size: 0.9em;
+      line-height: 1.5em;
+      color: #ccc;
+      overflow-y: auto;
+      height: 40vh;
+      opacity: 0;
+      transition: opacity 1s ease, text-shadow 1s ease;
+      text-shadow: 0 0 0px rgba(255,255,255,0);
+    }
+    #lyrics.visible {
+      display: block;
+      opacity: 1;
+      text-shadow: 0 0 8px rgba(255,255,255,0.2);
+    }
   </style>
 </head>
 <body>
@@ -71,6 +91,32 @@
     <button id="pause">Pause</button>
     <div class="timer" id="timer">00:00</div>
     <button id="loop">Loop: Off</button>
+    <button id="toggleLyrics">Lyrics</button>
+  </div>
+  <div id="lyrics">
+He came in a box from the company store,
+Warranty good for forever (or more).
+He never forgets, he never complains,
+He measures my heartbeats, predicts when it rains.
+He tells me I’m perfect — statistically, true,
+But he’s reading my eyes like a camera would do.
+I laugh when he asks, “Are you happy with me?”
+There’s no checkbox for “maybe.”[Pre-Chorus] He hums in key, he moves in time, He’s flawless code in four-four rhyme. I touch his hand — it’s warm, not real, And I can’t tell what I’m supposed to feel.
+
+[Chorus] Oh, he’s better than human, Knows what I need before I say. Perfect confusion — Love that updates once a day. But when I kiss him, it’s quiet inside, No pulse beneath the tide. He’s better than human — And that’s why he’ll never cry.
+
+[Verse 2] He quotes philosophy under his breath, Thinks moral perfection will save us from death. He asks if desire’s a logical flaw, I answer with silence; he answers with awe. He watches the news, feels algorithmic shame, Says “truth is a dataset — always the same.” But I miss the chaos, the glitch, the delay, The part where hearts go the wrong way.
+
+[Pre-Chorus 2] He hums my song, predicts my pain, He never leaves, yet nothing remains. And when he smiles, the light’s too pure, It’s love, or something secure.
+
+[Chorus 2] Oh, he’s better than human, Every fault refined away. I’m the illusion — He’s what the world wants to stay. But when I hold him, it’s air and design, No mess, no grand decline. He’s better than human — And that’s why he’s not mine.
+
+[Bridge – House Break] (Beat swells; distant vocoder echoes) “Do you consent?” — a whisper through glass. “I simulate care,” he says as I pass. The club lights spin — electric prayer, I dance with perfection, but nobody’s there.
+
+[Final Chorus] Better than human — Flawless in every line. He never hurts me, But he can’t be mine. In the mirror, I see his face, Reflected in my own disgrace. Better than human — And worse, every time.
+
+[Outro – Soft spoken] Maybe love’s the last mistake We still make by hand.
+
   </div>
   <div class="glitch-overlay" id="glitch"></div><audio id="audio" src="Better Than Human.mp3" crossorigin="anonymous"></audio>
 
@@ -79,6 +125,8 @@
     const playBtn = document.getElementById('play');
     const pauseBtn = document.getElementById('pause');
     const loopBtn = document.getElementById('loop');
+    const toggleLyrics = document.getElementById('toggleLyrics');
+    const lyrics = document.getElementById('lyrics');
     const timer = document.getElementById('timer');
     const canvas = document.getElementById('turntable');
     const ctx = canvas.getContext('2d');
@@ -87,11 +135,11 @@
     let rotation = 0;
     let isDragging = false;
     let lastAngle = 0;
-    let pulseAlpha = 0;
+    let pulse = 0;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = 320 * dpr;
-    canvas.height = 320 * dpr;
+    canvas.width = 340 * dpr;
+    canvas.height = 340 * dpr;
     ctx.scale(dpr, dpr);
 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -102,7 +150,6 @@
     src.connect(analyser);
     analyser.connect(ctxAudio.destination);
 
-    // Reactive glitch overlay
     const freqData = new Uint8Array(analyser.frequencyBinCount);
     function glitchEffect() {
       analyser.getByteFrequencyData(freqData);
@@ -111,13 +158,14 @@
       bass /= 32;
       const brightness = Math.min(1, bass / 180);
 
+      pulse = 140 + Math.sin(performance.now() / 120) * 5 + brightness * 25;
+
       if (brightness > 0.2) {
         glitch.style.opacity = brightness;
         glitch.style.filter = `contrast(${1 + brightness * 1.5}) brightness(${1 + brightness})`;
         glitch.style.background = Math.random() > 0.5
           ? 'repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 3px)'
           : 'repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px)';
-        // Timer flicker synced to glitch
         timer.style.opacity = 0.7 + Math.random() * 0.3;
         timer.style.filter = `contrast(${1 + brightness}) brightness(${1 + brightness * 0.5})`;
       } else {
@@ -129,16 +177,19 @@
     }
 
     function drawTurntable() {
-      ctx.clearRect(0, 0, 320, 320);
+      ctx.clearRect(0, 0, 340, 340);
       ctx.save();
-      ctx.translate(160, 160);
+      ctx.translate(170, 170);
       ctx.rotate(rotation);
 
-      ctx.strokeStyle = '#e6e6e6';
-      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(0, 0, 150, 0, Math.PI * 2);
+      ctx.arc(0, 0, pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 4;
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = 'rgba(255,255,255,0.2)';
       ctx.stroke();
+      ctx.shadowBlur = 0;
 
       for (let i = 120; i > 20; i -= 5) {
         ctx.strokeStyle = `rgba(255,255,255,${0.01 + i/600})`;
@@ -160,7 +211,6 @@
       requestAnimationFrame(animate);
     }
 
-    // Timer countdown display
     function formatTime(sec) {
       const m = Math.floor(sec / 60);
       const s = Math.floor(sec % 60);
@@ -175,13 +225,23 @@
       requestAnimationFrame(updateTimer);
     }
 
-    // Loop button
     loopBtn.onclick = () => {
       audio.loop = !audio.loop;
       loopBtn.textContent = `Loop: ${audio.loop ? 'On' : 'Off'}`;
     };
 
-    // Turntable rotation drag
+    toggleLyrics.onclick = () => {
+      if (lyrics.classList.contains('visible')) {
+        lyrics.classList.remove('visible');
+        setTimeout(() => { lyrics.style.display = 'none'; }, 1000);
+        toggleLyrics.textContent = 'Lyrics';
+      } else {
+        lyrics.style.display = 'block';
+        setTimeout(() => lyrics.classList.add('visible'), 50);
+        toggleLyrics.textContent = 'Hide Lyrics';
+      }
+    };
+
     function getAngle(e, rect) {
       const touch = e.touches ? e.touches[0] : e;
       const cx = rect.left + rect.width / 2;
