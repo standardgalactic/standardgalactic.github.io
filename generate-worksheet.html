@@ -305,7 +305,8 @@ async function exportWorksheetsPDF() {
   }
 
   // Clone worksheet HTML
-  const printable = sheets.cloneNode(true);
+const printable = document.getElementById('worksheets').cloneNode(true);
+
 
 // Build printable styles (white background, SGA font reference)
 const printableStyle = `
@@ -321,8 +322,8 @@ const printableStyle = `
     html, body {
       margin: 0;
       padding: 0;
-      background: #fff;
-      color: #000;
+      background: #fff !important;
+  color: #000 !important;
       font-family: Arial, sans-serif;
     }
 
@@ -330,7 +331,8 @@ const printableStyle = `
       width: 8.5in;
       box-sizing: border-box;
       padding: 0.45in;
-      border: 1px solid #000;
+      border: 1px solid #000 !important;
+ color: #000 !important;
       margin: 0 auto 0.45in;
       background: #fff;
     }
@@ -341,19 +343,8 @@ const printableStyle = `
       margin-bottom: 0.5em;
     }
 .margin-number {
-  width: 2in;                   /* fixed margin column width */
-  font-family: monospace;
-  font-size: 0.9em;
-  opacity: 0.9;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 0.25em;
-}
-.margin-number {
-  width: 200px;
-  text-align: left;
+  min-width: 1.8in !important;
+  text-align: left !important;
   font-family: monospace;
   font-size: 0.9em;
   opacity: 0.9;
@@ -375,34 +366,36 @@ const printableStyle = `
   flex: 1;
   text-align: center;
   font-family: 'Sga Regular', serif;
-  font-size: 2.2em;      /* matches on-screen */
+  font-size: 2.3em;
   line-height: 1.2;
   white-space: nowrap;
   letter-spacing: 0;
-  transform: translateY(-3px); /* raise slightly */
+  transform: translateY(-2px);
 }
 
 .cg {
   display: inline-block;
-  letter-spacing: 0;
   margin: 0 0.35em;
+  letter-spacing: 0;
   vertical-align: middle;
 }
 
+/* === New grid-style blanks === */
 .blanks {
-  width: 280px;
-  text-align: right;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr);   /* two columns */
+  grid-template-rows: repeat(2, auto);     /* two rows */
+  gap: 0.4em 0.8em;
+  width: 1.8in !important;
+  justify-items: right;
+  align-items: end;
 }
 
 .blank {
   display: inline-block;
-  width: 60px;
-  border-bottom: 1px solid #000;
-  height: 1.2rem;
+  width: 0.7in;
+  border-bottom: 1px solid #000 !important;
+  height: 1.1rem;
   vertical-align: bottom;
 }
 
@@ -411,18 +404,65 @@ const printableStyle = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0.5in;
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0.75in;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+    overflow: visible !important;
+  }
+
+  body {
+    transform: none !important;
+    width: 100% !important;
+    max-width: 8in !important;
+    margin: 0 auto !important;
+  }
+
+  .worksheet-page {
+    page-break-after: always;
+    width: 7.9in !important;
+    margin: 0 auto 0.4in !important;
+    border: 1px solid #000 !important;
+    padding: 0.45in !important;
+    box-sizing: border-box !important;
+  }
 }
 
 
-    /* Ensure each worksheet page starts on a new printed page */
-    @media print {
-      .worksheet-page { page-break-after: always; }
-      body {
-        transform: scale(0.96);    /* light global shrink for perfect fit */
-        transform-origin: top center;
-      }
-    }
+  body {
+    transform: none !important;        /* remove all transforms */
+    width: 100% !important;
+    max-width: 8in !important;         /* fits within letter page minus margins */
+    margin: 0 auto !important;         /* center horizontally */
+  }
+
+  .worksheet-page {
+    page-break-after: always;
+    width: 7.9in !important;           /* guaranteed fit inside print margins */
+    margin: 0 auto 0.4in !important;   /* vertical spacing between pages */
+    border: 1px solid #000 !important;
+    padding: 0.45in !important;
+    box-sizing: border-box !important;
+  }
+
+  .margin-number {
+    min-width: 1.8in !important;       /* ensures column stays visible */
+    margin-left: 0 !important;
+    text-align: left !important;
+  }
+}
+
+
   </style>
 `;
 
@@ -435,28 +475,28 @@ const printableStyle = `
   };
 
   // Create printable HTML and set it to document
-  const html = `
-  <!doctype html>
-  <html>
-    <head>
-      <meta charset="utf-8">
-      <title>${document.title || 'Cistercian Worksheets'}</title>
-      ${printableStyle}
-    </head>
-    <body>
-      <div style="text-align:center;margin-bottom:1em;">
-        <h1 style="margin:0;font-family:'Sga Regular',serif;">Cistercian Number Laboratory</h1>
-        <p style="margin:4px 0;font-size:0.9em;">
-          <a href="https://standardgalactic.github.io/generate-worksheet.html" target="_blank" style="color:#000;text-decoration:none;">
-            https://standardgalactic.github.io/generate-worksheet.html
-          </a>
-        </p>
-        <hr style="margin-top:8px;margin-bottom:16px;border:none;border-top:1px solid #000;width:90%;">
-      </div>
-      ${printable.outerHTML}
-    </body>
-  </html>
-`;
+ const html = `
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Cistercian Worksheet</title>
+    ${printableStyle}
+  </head>
+  <body>
+    <div style="text-align:center;margin-bottom:1em;">
+      <h1 style="margin:0;font-family:'Sga Regular',serif;">Cistercian Number Laboratory</h1>
+      <p style="margin:4px 0;font-size:0.9em;">
+        <a href="https://standardgalactic.github.io/generate-worksheet.html" target="_blank" style="color:#000;text-decoration:none;">
+          https://standardgalactic.github.io/generate-worksheet.html
+        </a>
+      </p>
+      <hr style="margin-top:8px;margin-bottom:16px;border:none;border-top:1px solid #000;width:90%;">
+    </div>
+    ${printable.outerHTML}
+  </body>
+</html>`;
+
 
   // Replace current document with printable content (preserves same origin so fonts load)
   document.open();
