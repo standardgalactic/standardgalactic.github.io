@@ -1,345 +1,507 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cistercian Font Laboratory</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cistercian Number Laboratory</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: black;
-  color: #00ff00;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-canvas { position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; }
-#container {
-  width: 90%; max-width: 1200px;
-  background-color: rgba(0,0,0,0.85);
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 20px #00ff00;
-  padding: 20px; margin: 20px 0; z-index: 1;
-}
-button, input {
-  background: black; color: #00ff00; border: 1px solid #00ff00;
-  padding: 6px 12px; margin: 5px;
-}
-button:hover { background:#00ff00; color:black; }
+  /* Register SGA for the page and for the printable view */
+  @font-face {
+    font-family: 'Sga Regular';
+    src: url('fonts/Sga-Regular.woff2') format('woff2'),
+         url('fonts/Sga-Regular.woff') format('woff'),
+         url('fonts/Sga-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
 
-/* Font comparison wall */
-#fontPreviewPanel {
-  display: flex; flex-wrap: wrap; justify-content: center;
-  max-height: 320px; overflow-y: auto;
-  border: 1px solid #00ff00; padding: 10px; margin-bottom: 20px;
-}
-.fontPreview {
-  flex: 1 1 45%; max-width: 48%;
-  border: 1px solid #00ff00; padding: 10px; margin: 5px;
-  cursor: pointer; transition: background 0.2s ease;
-}
-.fontPreview:hover, .fontPreview.active { background:#00ff00; color:black; }
-.fontSample { font-size: 1.5em; display:block; margin-top:4px; overflow-x:auto; }
+  body {
+    font-family: Arial, sans-serif;
+    color: #00ff00;
+    background: black;
+    margin: 0;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px;
+  }
 
-.result { font-size:3em; margin-top:10px; }
-.example { display:inline-block; margin:5px; padding:8px; border:1px solid #00ff00; font-size:1.5em; }
+  #container {
+    text-align: center;
+    width: 100%;
+    max-width: 1100px;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 18px;
+    box-shadow: 0 0 20px #00ff00;
+    border: 2px solid #00ff00;
+    margin: 18px 0;
+    z-index: 1;
+  }
 
-.worksheet-page { width:8.5in; height:11in; margin:auto; padding:1in;
-  border:2px solid #00ff00; margin-bottom:40px; color:#00ff00;
-  box-sizing:border-box; position:relative;
-}
-.page-header { text-align:center; font-size:1.2em; margin-bottom:0.5em; }
-.page-grid { display:flex; flex-direction:column; gap:12px; }
-.worksheet-row { display:flex; justify-content:center; position:relative; }
-.margin-number { position:absolute; top:0; width:1in; text-align:center;
-  font-family:monospace; font-size:0.9em; opacity:0.8; }
-.margin-left .margin-number { left:-1.2in; }
-.margin-right .margin-number { right:-1.2in; }
-.glyphs { flex:1; text-align:center; font-size:2.5em; letter-spacing:0.5em; }
-.blank { display:inline-block; width:60px; border-bottom:1px solid #00ff00; margin:0 15px; }
+  input[type="number"], input[type="text"], button {
+    background-color: black;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    padding: 8px 10px;
+    margin: 6px;
+    font-family: inherit;
+  }
+  button:hover { background-color:#00ff00; color:black; cursor:pointer; }
 
-@media print {
-  body { background:white; color:black; }
-  .worksheet-page { border-color:black; color:black; page-break-after:always; }
-  .blank { border-color:black; }
-}
-#fontSampleInput {
-  width:90%; max-width:500px; display:block; margin:10px auto 20px auto;
-  text-align:center; font-family:monospace; font-size:1em;
-}
+  .result {
+    font-size: 3em;
+    margin-top: 10px;
+    font-family: 'Sga Regular', serif !important; /* Always use SGA font for result */
+  }
+
+  .example {
+    font-size: 1.2em;
+    margin: 6px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #00ff00;
+    font-family: 'Sga Regular', serif !important;
+  }
+
+  /* Keep glyph internals unspaced; wrap each 4-digit group in .cg for spacing between groups */
+  .glyphs {
+    flex:1;
+    text-align:center;
+    font-size:2.0em;
+    letter-spacing: 0;      /* no spacing between codepoints inside a composite glyph */
+    white-space: nowrap;
+    font-family: 'Sga Regular', serif !important;
+  }
+  .glyphs .cg {
+    display:inline-block;
+    letter-spacing: 0;
+    margin: 0 0.35em;       /* spacing BETWEEN groups */
+    vertical-align: middle;
+  }
+  .glyphs .cg:last-child { margin-right: 0; }
+
+  /* Worksheet layout */
+  .worksheet-page { width:8.5in; max-width:100%; height:auto; margin:auto; padding:0.5in;
+    border:2px solid #00ff00; margin-bottom:16px; color:#00ff00; box-sizing:border-box; position:relative; background:transparent; }
+  .page-header { text-align:center; font-size:1.0em; margin-bottom:0.5em; }
+  .page-grid { display:flex; flex-direction:column; gap:10px; }
+  .worksheet-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .margin-number { width:200px; text-align:left; font-family:monospace; font-size:0.9em; opacity:0.9; }
+  .blanks { width:280px; text-align:right; }
+  .blank { display:inline-block; width:60px; border-bottom:1px solid #00ff00; margin:0 6px; height:1.2rem; vertical-align:bottom; }
+
+  /* Mobile: keep margin numbers & blanks visible but compact */
+  @media (max-width:700px) {
+    .margin-number { width:80px; font-size:0.75em; opacity:0.85; }
+    .blanks { width:140px; }
+    .blank { width:32px; }
+    .glyphs { font-size:1.4em; letter-spacing:0; }
+  }
 </style>
 </head>
-
 <body>
-<canvas id="starfield"></canvas>
-<div id="container">
-  <h1>Cistercian Font Laboratory</h1>
+  <div id="container">
+    <h1>Cistercian Number Laboratory</h1>
 
-  <input type="text" id="fontSampleInput"
-         placeholder="Type sample text or glyphs (e.g. 𛯡𛯢𛯣𛯤 or 1234)" />
+    <div style="margin-top:8px;">
+ <a href="https://standardgalactic.github.io/generate-worksheet.html" target="_blank" style="color:#00ff00;text-decoration:none;">
+    https://standardgalactic.github.io/generate-worksheet.html
+  </a>
+      <label>Number: <input id="arabicNumber" type="text" placeholder="e.g. 1234 or 98765432" value="1234"></label>
+      <button onclick="translateNumber()">Translate</button>
+      <button onclick="generateExamples()">Regenerate Examples</button>
+    </div>
 
-  <div id="fontPreviewPanel"></div>
+    <p id="cistercianResult" class="result" aria-live="polite"></p>
 
-  <input type="number" id="arabicNumber" placeholder="Enter a number" min="0">
-  <button onclick="translateNumber()">Translate</button>
-  <p id="cistercianResult" class="result"></p>
+    <div class="examples" style="margin-top:12px;">
+      <h3>Examples</h3>
+      <div id="examples-container" style="display:flex;flex-wrap:wrap;justify-content:center;"></div>
+    </div>
 
-  <div class="examples">
-    <h2>Example Numerals</h2>
-    <div id="examples-container"></div>
-    <button onclick="generateExamples()">Regenerate</button>
+    <hr style="border-color:#004400;margin:18px 0;width:95%">
+
+    <div style="margin-top:8px;">
+      <h3>Worksheet Generator</h3>
+      <label>Pages: <input id="numPages" type="number" min="1" max="50" value="1"></label>
+      <label>Rows/Page: <input id="rowsPerPage" type="number" min="1" max="50" value="8"></label>
+      <button onclick="generateWorksheets()">Generate Worksheets</button>
+      <button onclick="exportWorksheetsPDF()">Export Worksheets to PDF</button>
+    </div>
+
+    <div id="worksheets" style="margin-top:16px;"></div>
   </div>
-
-  <div id="worksheet-setup">
-    <h2>Worksheet Generator</h2>
-    <form onsubmit="event.preventDefault(); generateWorksheets();">
-      <label>Pages: <input type="number" id="numPages" min="1" max="256" value="2"></label>
-      <label>Rows/Page: <input type="number" id="rowsPerPage" min="1" max="50" value="25"></label>
-      <button type="submit">Generate</button>
-      <button type="button" onclick="window.print()">Print All</button>
-      <button type="button" onclick="exportPDF()">Export Worksheet PDF</button>
-      <button type="button" onclick="exportFontAtlas()">Export Font Atlas (all fonts)</button>
-    </form>
-    <div id="worksheets"></div>
-  </div>
-</div>
 
 <script>
-const { jsPDF } = window.jspdf;
-const fontList = [
-  "Sga-Regular","Cheiro-Regular","Clypto-Regular","CursiveGalactic-Regular",
-  "Systada-Regular","NovaMonoStandardGalactic",
-  "Lingojam_cipher-Regular","Logico_philosophicus-Regular","shapeform"
-];
-let currentFont = sessionStorage.getItem('currentFont') || 'Sga-Regular';
+/* -----------------------
+   Translator & generator
+   ----------------------- */
 
-/* === Font Comparison Wall === */
-function buildFontPanel(){
-  const panel=document.getElementById('fontPreviewPanel');
-  panel.innerHTML='';
-  fontList.forEach(f=>{
-    const preview=document.createElement('div');
-    preview.className='fontPreview';
-    preview.dataset.font=f;
-    preview.innerHTML=`<strong>${f.replace(/-/g,' ')}</strong>
-                       <span class="fontSample" id="sample-${f}"
-                       style="font-family:'${f}'">𛯡𛯢𛯣𛯤 1234</span>`;
-    preview.onclick=()=>selectFont(f);
-    panel.appendChild(preview);
-    const style=document.createElement('style');
-    style.textContent=`@font-face {
-      font-family:'${f}';
-      src:url('fonts/${f}.woff2') format('woff2'),
-          url('fonts/${f}.woff') format('woff'),
-          url('fonts/${f}.ttf') format('truetype');}`;
-    document.head.appendChild(style);
-  });
-  selectFont(currentFont);
-}
+function arabicToCistercian(num) {
+    const u = {'0':'\uEBA0','1':'\uEBA1','2':'\uEBA2','3':'\uEBA3','4':'\uEBA4','5':'\uEBA5','6':'\uEBA6','7':'\uEBA7','8':'\uEBA8','9':'\uEBA9'};
+    const t = {'1':'\uEBB1','2':'\uEBB2','3':'\uEBB3','4':'\uEBB4','5':'\uEBB5','6':'\uEBB6','7':'\uEBB7','8':'\uEBB8','9':'\uEBB9'};
+    const h = {'1':'\uEBC1','2':'\uEBC2','3':'\uEBC3','4':'\uEBC4','5':'\uEBC5','6':'\uEBC6','7':'\uEBC7','8':'\uEBC8','9':'\uEBC9'};
+    const k = {'1':'\uEBD1','2':'\uEBD2','3':'\uEBD3','4':'\uEBD4','5':'\uEBD5','6':'\uEBD6','7':'\uEBD7','8':'\uEBD8','9':'\uEBD9'};
 
-/* Update all previews live */
-let inputTimer;
-document.addEventListener('DOMContentLoaded',()=>{
-  const input=document.getElementById('fontSampleInput');
-  input.addEventListener('input',()=>{
-    clearTimeout(inputTimer);
-    inputTimer=setTimeout(()=>{
-      const txt=input.value||"𛯡𛯢𛯣𛯤 1234";
-      fontList.forEach(f=>{
-        const s=document.getElementById(`sample-${f}`); if(s) s.textContent=txt;
-      });
-    },200);
-  });
-});
+    if (typeof num === 'string') num = parseInt(num, 10);
+    if (!Number.isFinite(num) || num < 0) return '';
 
-function selectFont(fontName){
-  currentFont=fontName;
-  sessionStorage.setItem('currentFont',fontName);
-  document.querySelectorAll('.fontPreview').forEach(el=>{
-    el.classList.toggle('active', el.dataset.font===fontName);
-  });
-  document.querySelectorAll('.glyphs,.example,.result,#cistercianResult')
-    .forEach(el=>el.style.fontFamily=`'${fontName}', sans-serif`);
-}
+    if (num === 0) return u['0'];
 
-/* === Cistercian Numeral Logic === */
-function arabicToCistercian(num){
-  const u={'0':'\uEBA0','1':'\uEBA1','2':'\uEBA2','3':'\uEBA3','4':'\uEBA4','5':'\uEBA5','6':'\uEBA6','7':'\uEBA7','8':'\uEBA8','9':'\uEBA9'};
-  const t={'1':'\uEBB1','2':'\uEBB2','3':'\uEBB3','4':'\uEBB4','5':'\uEBB5','6':'\uEBB6','7':'\uEBB7','8':'\uEBB8','9':'\uEBB9'};
-  const h={'1':'\uEBC1','2':'\uEBC2','3':'\uEBC3','4':'\uEBC4','5':'\uEBC5','6':'\uEBC6','7':'\uEBC7','8':'\uEBC8','9':'\uEBC9'};
-  const k={'1':'\uEBD1','2':'\uEBD2','3':'\uEBD3','4':'\uEBD4','5':'\uEBD5','6':'\uEBD6','7':'\uEBD7','8':'\uEBD8','9':'\uEBD9'};
-  if(num===0) return u['0'];
-  let res='';
-  while(num>0){
-    let c=num%10000;
-    res=(u[c%10]||'')+(t[Math.floor(c/10)%10]||'')+
-        (h[Math.floor(c/100)%10]||'')+(k[Math.floor(c/1000)%10]||'')+res;
-    num=Math.floor(num/10000);
-  }
-  return res;
-}
-
-function translateNumber(){
-  const n=parseInt(document.getElementById('arabicNumber').value,10);
-  document.getElementById('cistercianResult').textContent=
-    (!isNaN(n)&&n>=0)?arabicToCistercian(n):'Invalid';
-}
-
-function generateExamples(){
-  const c=document.getElementById('examples-container'); c.innerHTML='';
-  for(let i=1;i<=10;i++){
-    const ex=document.createElement('div'); ex.className='example';
-    ex.textContent=`${arabicToCistercian(i)} (${i})`; c.appendChild(ex);
-  }
-}
-
-/* === Worksheet === */
-function generateWorksheets(){
-  const numPages=+document.getElementById("numPages").value;
-  const rows=+document.getElementById("rowsPerPage").value;
-  const container=document.getElementById("worksheets"); container.innerHTML="";
-  for(let p=1;p<=numPages;p++){
-    const page=document.createElement("div");
-    page.className="worksheet-page "+(p%2===0?"margin-right":"margin-left");
-    page.innerHTML=`<div class="page-header">Page ${p}</div>`;
-    const grid=document.createElement("div"); grid.className="page-grid";
-    for(let r=0;r<rows;r++){
-      let glyphs="",numString="";
-      for(let j=0;j<4;j++){ const v=Math.floor(Math.random()*10000);
-        numString+=v.toString().padStart(4,"0"); glyphs+=arabicToCistercian(v);}
-      const formatted=numString.match(/.{1,4}/g).join(" ");
-      grid.innerHTML+=`<div class="worksheet-row">
-        <div class="margin-number">${formatted}</div>
-        <div class="glyphs" style="font-family:'${currentFont}'">${glyphs}</div>
-        <div class="blanks">
-          <span class="blank"></span><span class="blank"></span>
-          <span class="blank"></span><span class="blank"></span>
-        </div></div>`;
+    let res = '';
+    let n = Math.floor(num);
+    while (n > 0) {
+      const chunk = n % 10000;
+      const units = chunk % 10;
+      const tens = Math.floor(chunk / 10) % 10;
+      const hundreds = Math.floor(chunk / 100) % 10;
+      const thousands = Math.floor(chunk / 1000) % 10;
+      // units -> tens -> hundreds -> thousands per chunk (matches your working translator)
+      const part = (u[units]||'') + (t[tens]||'') + (h[hundreds]||'') + (k[thousands]||'');
+      res = part + res;
+      n = Math.floor(n / 10000);
     }
-    page.appendChild(grid); container.appendChild(page);
-  }
+    return res;
 }
 
-/* === Shared Helpers === */
-function blobToBase64(blob){
-  return new Promise((res,rej)=>{
-    const reader=new FileReader();
-    reader.onloadend=()=>res(reader.result);
-    reader.onerror=rej;
-    reader.readAsDataURL(blob);
+/* Translate UI */
+function translateNumber() {
+  const input = document.getElementById('arabicNumber').value.trim();
+  if (!/^\d+$/.test(input)) {
+    alert('Please enter a valid non-negative integer (digits only).');
+    return;
+  }
+  const glyph = arabicToCistercian(input);
+  const el = document.getElementById('cistercianResult');
+  el.textContent = '';
+  const span = document.createElement('span');
+  span.className = 'cg';
+  span.style.fontFamily = "'Sga Regular', 'Sga-Regular', serif";
+  span.textContent = glyph || '(empty)';
+  el.appendChild(span);
+}
+
+/* Examples UI */
+function generateExamples() {
+  const examplesContainer = document.getElementById('examples-container');
+  examplesContainer.innerHTML = '';
+  const sample = [0,4,42,1234,98765432,10000,10001,20003004];
+  sample.forEach(n => {
+    const div = document.createElement('div');
+    div.className = 'example';
+    div.style.fontFamily = "'Sga Regular', 'Sga-Regular', serif";
+    const label = document.createElement('span');
+    label.textContent = `${n}: `;
+    const glyph = document.createElement('span');
+    glyph.className = 'cg';
+    glyph.style.fontFamily = "'Sga Regular', 'Sga-Regular', serif";
+    glyph.textContent = arabicToCistercian(n);
+    div.appendChild(label);
+    div.appendChild(glyph);
+    examplesContainer.appendChild(div);
   });
 }
 
-async function embedFontInto(pdf,fontName){
-  const tries=[`fonts/${fontName}.woff2`,`fonts/${fontName}.woff`,`fonts/${fontName}.ttf`];
-  for(const url of tries){
-    try{
-      const r=await fetch(url); if(!r.ok)continue;
-      const b=await r.blob(); const base64=await blobToBase64(b);
-      const vfs=url.split('/').pop();
-      pdf.addFileToVFS(vfs, base64.split(',')[1]);
-      pdf.addFont(vfs,fontName,"normal"); pdf.setFont(fontName); return true;
-    }catch(_){}
-  }
-  pdf.setFont("helvetica"); return false;
-}
+/* Worksheet generator */
+function generateWorksheets() {
+  const numPages = +document.getElementById("numPages").value || 1;
+  const rows = +document.getElementById("rowsPerPage").value || 8;
+  const container = document.getElementById("worksheets");
+  container.innerHTML = '';
 
-/* === Export Worksheet PDF === */
-async function exportPDF(){
-  const pdf=new jsPDF({orientation:'portrait',unit:'in',format:'letter'});
-  await embedFontInto(pdf,currentFont);
-  pdf.setFontSize(14);
-  const pages=document.querySelectorAll('.worksheet-page');
-  for(let p=0;p<pages.length;p++){
-    if(p>0) pdf.addPage();
-    const rows=pages[p].querySelectorAll('.worksheet-row');
-    let y=1; pdf.text(`Worksheet — ${currentFont}`,4.25,0.7,{align:"center"});
-    for(const row of rows){
-      const num=row.querySelector('.margin-number').textContent;
-      const glyph=row.querySelector('.glyphs').textContent;
-      const margin=(p%2===0)?7.0:1.0;
-      pdf.text(num,margin,y);
-      pdf.text(glyph,margin===7.0?1.2:1.5,y);
-      y+=0.35; if(y>10.5){pdf.addPage();pdf.setFont(currentFont);y=1;}
+  const FONT_FAMILY = "'Sga Regular', 'Sga-Regular', serif";
+
+  for (let p = 1; p <= numPages; p++) {
+    const page = document.createElement('div');
+    page.className = "worksheet-page " + (p % 2 === 0 ? "margin-right" : "margin-left");
+
+    const header = document.createElement('div');
+    header.className = 'page-header';
+    header.textContent = `Page ${p}`;
+    page.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'page-grid';
+
+    for (let r = 0; r < rows; r++) {
+      const groupNumbers = [];
+      const glyphNodes = [];
+
+      for (let j = 0; j < 4; j++) {
+        const v = Math.floor(Math.random() * 10000);
+        groupNumbers.push(v.toString().padStart(4, '0'));
+        const span = document.createElement('span');
+        span.className = 'cg';
+        span.style.fontFamily = FONT_FAMILY;
+        span.textContent = arabicToCistercian(v);
+        glyphNodes.push(span);
+      }
+
+      const row = document.createElement('div');
+      row.className = 'worksheet-row';
+// Build a 2×2 matrix (two across, two down)
+const marginDiv = document.createElement('div');
+marginDiv.className = 'margin-number';
+
+// Split the four groups into two rows of two numbers
+const topRow = document.createElement('div');
+topRow.className = 'num-row';
+topRow.textContent = groupNumbers.slice(0, 2).join('  ');
+
+const bottomRow = document.createElement('div');
+bottomRow.className = 'num-row';
+bottomRow.textContent = groupNumbers.slice(2).join('  ');
+
+marginDiv.appendChild(topRow);
+marginDiv.appendChild(bottomRow);
+
+      const glyphDiv = document.createElement('div');
+      glyphDiv.className = 'glyphs';
+      glyphDiv.style.fontFamily = FONT_FAMILY;
+      glyphDiv.style.whiteSpace = 'nowrap';
+      glyphNodes.forEach(n => glyphDiv.appendChild(n));
+
+      const blanks = document.createElement('div');
+      blanks.className = 'blanks';
+      blanks.innerHTML = `<span class="blank"></span><span class="blank"></span>
+                          <span class="blank"></span><span class="blank"></span>`;
+
+      row.appendChild(marginDiv);
+      row.appendChild(glyphDiv);
+      row.appendChild(blanks);
+
+
+      grid.appendChild(row);
     }
+
+    page.appendChild(grid);
+    container.appendChild(page);
   }
-  pdf.save(`Cistercian_${currentFont}.pdf`);
 }
 
-/* === Font Atlas PDF === */
-function seqFromCodepoint(start,count){
-  return Array.from({length:count},(_,i)=>String.fromCodePoint(start+i)).join(' ');
-}
-function textBlock(pdf,txt,x,y,size=12){
-  pdf.setFontSize(size); pdf.text(txt,x,y);
-  return y+(size/72)+0.12;
-}
-async function exportFontAtlas(){
-  const pdf=new jsPDF({orientation:'portrait',unit:'in',format:'letter'});
-  for(let i=0;i<fontList.length;i++){
-    const f=fontList[i]; if(i>0) pdf.addPage();
-    const ok=await embedFontInto(pdf,f);
-    pdf.setFontSize(18);
-    pdf.text(`Font Atlas — ${f.replace(/-/g,' ')}`,4.25,0.8,{align:"center"});
-    let y=1.1;
-    y=textBlock(pdf,"Sample ladder:",1.0,y,12);
-    [36,24,16,12].forEach(s=>{y=textBlock(pdf,"𛯡𛯢𛯣𛯤 1234 ABCD abcd",1.0,y,s);});
-    y=textBlock(pdf,"Pangram: Sphinx of black quartz, judge my vow.",1.0,y,12);
-    y=textBlock(pdf,"Digits: 0 1 2 3 4 5 6 7 8 9",1.0,y,12);
-    y+=0.1; pdf.setFontSize(12);
-    pdf.text("Cistercian Blocks:",1.0,y); y+=0.25;
-    pdf.text("Units U+EBA0–EBA9:",1.0,y);
-    pdf.setFontSize(20); pdf.text(seqFromCodepoint(0xEBA0,10),3.1,y); y+=0.4;
-    pdf.setFontSize(12); pdf.text("Tens U+EBB1–EBB9:",1.0,y);
-    pdf.setFontSize(20); pdf.text(seqFromCodepoint(0xEBB1,9),3.1,y); y+=0.4;
-    pdf.setFontSize(12); pdf.text("Hundreds U+EBC1–EBC9:",1.0,y);
-    pdf.setFontSize(20); pdf.text(seqFromCodepoint(0xEBC1,9),3.1,y); y+=0.4;
-    pdf.setFontSize(12); pdf.text("Thousands U+EBD1–EBD9:",1.0,y);
-    pdf.setFontSize(20); pdf.text(seqFromCodepoint(0xEBD1,9),3.1,y); y+=0.5;
-    const r=()=>Math.floor(Math.random()*10000).toString().padStart(4,"0");
-    const a=r(),b=r(),c=r(),d=r(); const fstring=`${a} ${b} ${c} ${d}`;
-    const g=arabicToCistercian(+a)+arabicToCistercian(+b)+
-            arabicToCistercian(+c)+arabicToCistercian(+d);
-    pdf.setFontSize(12); pdf.text("Composed demo:",1.0,y); y+=0.28;
-    pdf.setFontSize(22); pdf.text(g,1.0,y); y+=0.35;
-    pdf.setFontSize(10); pdf.text(`Reference: ${fstring}`,1.0,y);
-    if(!ok){pdf.setFontSize(9);
-      pdf.text("(font file missing, fallback used)",7.8,10.9,{align:"right"});}
+/* -----------------------
+   Export: printable fallback (black-on-white worksheets only)
+   ----------------------- */
+
+/*
+  exportWorksheetsPDF()
+
+  Uses an improved waiting strategy to avoid the "blank print dialog" symptom:
+  - opens a new window, writes the minimal HTML
+  - waits for the new window's document readyState and for fonts to be ready (document.fonts.ready)
+  - then calls print()
+
+  This avoids printing before fonts/layout have loaded (the common cause of a blank print dialog).
+*/
+async function exportWorksheetsPDF() {
+  const sheets = document.getElementById('worksheets');
+  if (!sheets || !sheets.innerHTML.trim()) {
+    alert('No worksheets to export — generate worksheets first.');
+    return;
   }
-  pdf.save("Font_Atlas.pdf");
+
+  // Clone worksheet HTML
+  const printable = sheets.cloneNode(true);
+
+// Build printable styles (white background, SGA font reference)
+const printableStyle = `
+  <style>
+    @font-face {
+      font-family: 'Sga Regular';
+      src: url('fonts/Sga-Regular.woff2') format('woff2'),
+           url('fonts/Sga-Regular.woff') format('woff'),
+           url('fonts/Sga-Regular.ttf') format('truetype');
+      font-display: swap;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    .worksheet-page {
+      width: 8.5in;
+      box-sizing: border-box;
+      padding: 0.45in;
+      border: 1px solid #000;
+      margin: 0 auto 0.45in;
+      background: #fff;
+    }
+
+    .page-header {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5em;
+    }
+.margin-number {
+  width: 2in;                   /* fixed margin column width */
+  font-family: monospace;
+  font-size: 0.9em;
+  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.25em;
+}
+.margin-number {
+  width: 200px;
+  text-align: left;
+  font-family: monospace;
+  font-size: 0.9em;
+  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.25em;
 }
 
-/* === Starfield Background === */
-const starCanvas=document.getElementById("starfield"),ctx=starCanvas.getContext("2d");
-function resize(){starCanvas.width=innerWidth;starCanvas.height=innerHeight;}
-window.addEventListener('resize',resize);resize();
-const stars=Array.from({length:800},()=>({x:Math.random()*innerWidth,
-  y: Math.random() * innerHeight,
-  z: Math.random() * innerWidth
-}));
+.margin-number .num-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  letter-spacing: 1px;
+}
 
-function animate() {
-  ctx.clearRect(0, 0, innerWidth, innerHeight);
-  for (const s of stars) {
-    s.z -= 0.05;
-    if (s.z <= 0) s.z = innerWidth;
-    const k = 128 / s.z;
-    const x = (s.x - innerWidth / 2) * k + innerWidth / 2;
-    const y = (s.y - innerHeight / 2) * k + innerHeight / 2;
-    const size = (1 - s.z / innerWidth) * 1.5;
-    ctx.fillStyle = "#00ff00";
-    ctx.fillRect(x, y, size, size);
+.glyphs {
+  flex: 1;
+  text-align: center;
+  font-family: 'Sga Regular', serif;
+  font-size: 2.2em;      /* matches on-screen */
+  line-height: 1.2;
+  white-space: nowrap;
+  letter-spacing: 0;
+  transform: translateY(-3px); /* raise slightly */
+}
+
+.cg {
+  display: inline-block;
+  letter-spacing: 0;
+  margin: 0 0.35em;
+  vertical-align: middle;
+}
+
+.blanks {
+  width: 280px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.blank {
+  display: inline-block;
+  width: 60px;
+  border-bottom: 1px solid #000;
+  height: 1.2rem;
+  vertical-align: bottom;
+}
+
+/* Page layout adjustments */
+.worksheet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+
+    /* Ensure each worksheet page starts on a new printed page */
+    @media print {
+      .worksheet-page { page-break-after: always; }
+      body {
+        transform: scale(0.96);    /* light global shrink for perfect fit */
+        transform-origin: top center;
+      }
+    }
+  </style>
+`;
+
+
+  // Save current body so we can restore it
+  const originalDoc = {
+    title: document.title,
+    head: document.head.cloneNode(true),
+    body: document.body.cloneNode(true)
+  };
+
+  // Create printable HTML and set it to document
+  const html = `
+  <!doctype html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>${document.title || 'Cistercian Worksheets'}</title>
+      ${printableStyle}
+    </head>
+    <body>
+      <div style="text-align:center;margin-bottom:1em;">
+        <h1 style="margin:0;font-family:'Sga Regular',serif;">Cistercian Number Laboratory</h1>
+        <p style="margin:4px 0;font-size:0.9em;">
+          <a href="https://standardgalactic.github.io/generate-worksheet.html" target="_blank" style="color:#000;text-decoration:none;">
+            https://standardgalactic.github.io/generate-worksheet.html
+          </a>
+        </p>
+        <hr style="margin-top:8px;margin-bottom:16px;border:none;border-top:1px solid #000;width:90%;">
+      </div>
+      ${printable.outerHTML}
+    </body>
+  </html>
+`;
+
+  // Replace current document with printable content (preserves same origin so fonts load)
+  document.open();
+  document.write(html);
+  document.close();
+
+  // Wait for fonts and layout to settle, then print and restore
+  try {
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    } else {
+      // small delay when font API not available
+      await new Promise(res => setTimeout(res, 300));
+    }
+    // Trigger print (user will be able to Save as PDF)
+    window.print();
+  } catch (err) {
+    console.warn('Print failed', err);
+    alert('Print failed; the printable view is shown — use browser Print to save as PDF.');
+  } finally {
+    // small delay to allow print dialog to open before restoring (helps some browsers)
+    setTimeout(() => {
+      try {
+        // Restore original head and body (we used clones)
+        document.open();
+        // restore head: we must serialize the original head clone
+        // To be safe, reuse outerHTML of the cloned head and body
+        const restoredHTML = '<!doctype html><html>' +
+          originalDoc.head.outerHTML +
+          '<body>' + originalDoc.body.innerHTML + '</body></html>';
+        document.write(restoredHTML);
+        document.close();
+        // restore title
+        document.title = originalDoc.title || 'Cistercian Number Laboratory';
+      } catch (e) {
+        // If restore fails (some browsers), inform user to reload
+        console.error('Failed to restore app after printing', e);
+        alert('Printed. Reload the page to continue using the app.');
+      }
+    }, 800);
   }
-  requestAnimationFrame(animate);
 }
 
-animate();
-buildFontPanel();
+/* Populate examples on load */
 generateExamples();
 </script>
 </body>
 </html>
-
