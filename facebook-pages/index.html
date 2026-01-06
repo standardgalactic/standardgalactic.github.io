@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Flyxion — Profile Index</title>
+
+<style>
+:root {
+  --bg: #020402;
+  --green: #39ff14;
+  --dim-green: #1f7a1f;
+  --border: #0f3d0f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 2rem;
+  background: radial-gradient(circle at center, #061a06 0%, var(--bg) 70%);
+  color: var(--green);
+  font-family: "Courier New", Courier, monospace;
+  text-shadow: 0 0 4px rgba(57,255,20,0.4);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15),
+    rgba(0,0,0,0.15) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  background: rgba(0, 10, 0, 0.6);
+  box-shadow:
+    inset 0 0 12px rgba(0,255,0,0.08),
+    0 0 10px rgba(0,255,0,0.05);
+}
+
+/* One link wraps image + name */
+.card a {
+  display: block;
+  color: var(--green);
+  text-decoration: none;
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border: 1px solid var(--dim-green);
+  display: block;
+  margin-bottom: 0.6rem;
+  filter: contrast(1.05) brightness(0.95);
+}
+
+.card span {
+  display: block;
+  text-align: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.card a:hover span {
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(57,255,20,0.9);
+}
+</style>
+</head>
+
+<body>
+
+<h1>FLYXION : NODE INDEX</h1>
+
+<div class="grid">
+
+  <div class="card"><a href="https://www.facebook.com/phytogenics/" target="_blank"><img src="A10.jpg"><span>A10</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/protonneutroncloud/" target="_blank"><img src="Atom.jpg"><span>Atom</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/stochasticflow" target="_blank"><img src="Boso.jpg"><span>Boso</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/clockspiel/" target="_blank"><img src="Centerfuge.jpg"><span>Centerfuge</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/crystolatisso/" target="_blank"><img src="Crystal Lattice.jpg"><span>Crystal Lattice</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/intracellular/" target="_blank"><img src="Cytosis.jpg"><span>Cytosis</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/howtocounttoinfinity/" target="_blank"><img src="Division by Zero.jpg"><span>Division by Zero</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/sharp.principal.diffuse.and.fundamental/" target="_blank"><img src="Electron.jpg"><span>Electron</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/effablethoughts/" target="_blank"><img src="Flyxion.jpg"><span>Flyxion</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/morphogeneticfield/" target="_blank"><img src="Gaiama.jpg"><span>Gaiama</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/exchangeparticle/" target="_blank"><img src="Gluon.jpg"><span>Gluon</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/middlewardy/" target="_blank"><img src="Baryon.jpg"><span>Baryon</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/provethatyouarenotarobot/" target="_blank"><img src="Haplopraxis.jpg"><span>Haplopraxis</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/pseudocommandcode/" target="_blank"><img src="I prefer xyloid.jpg"><span>I Prefer Xyloid</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/vacumerge/" target="_blank"><img src="Lamphrodyne.jpg"><span>Lamphrodyne</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/phewf/" target="_blank"><img src="Logarithmic History of the World.jpg"><span>Logarithmic History of the World</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/mereologicalspaceontology/" target="_blank"><img src="Mereological Space Ontology.jpg"><span>Mereological Space Ontology</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/macrolyfe" target="_blank"><img src="Microbial.jpg"><span>Microbial</span></a></div>
+<!--
+  <div class="card"><a href="https://www.facebook.com/mnemorable/" target="_blank"><img src="Mneumonic Memory Palace.jpg"><span>Mneumonic Memory Palace</span></a></div>
+-->
+  <div class="card"><a href="https://www.facebook.com/oblicosm/" target="_blank"><img src="Modus Ponens.jpg"><span>Modus Ponens</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/zenofpython/" target="_blank"><img src="Namespaces.jpg"><span>Namespaces</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/verydense/" target="_blank"><img src="Neutron.jpg"><span>Neutron</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/hearwhatsup/" target="_blank"><img src="Noonverse.jpg"><span>Noonverse</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/ocularum/" target="_blank"><img src="Ocularum.jpg"><span>Ocularum</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/flyxion/" target="_blank"><img src="Paperbot.jpg"><span>Paperbot</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/waivelet/" target="_blank"><img src="Quark.jpg"><span>Quark</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/intervolsorialconsortium/" target="_blank"><img src="Technium.jpg"><span>Technium</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/chrobatos/" target="_blank"><img src="Tyrannakuberplexachronamechachleopteryx.jpg"><span>Tyrannakuberplexachronamechachleopteryx</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/unicellulo/" target="_blank"><img src="Unit Cell.jpg"><span>Unit Cell</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/localsupergalaxy/" target="_blank"><img src="Virgo Supercluster.jpg"><span>Virgo Supercluster</span></a></div>
+  <div class="card"><a href="https://www.facebook.com/metanatalism/" target="_blank"><img src="Zyzzyva.jpg"><span>Zyzzyva</span></a></div>
+
+</div>
+
+</body>
+</html>
