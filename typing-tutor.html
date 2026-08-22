@@ -388,10 +388,93 @@
         }
     </script>
 <!-- 
-    Concept Note: In this game, each bubble represents an expanding alien civilization, akin to the theoretical "grabby aliens" in astrobiology.
+    Concept Note: Grabby Bubbles and the Cost of Inattention
 
-These civilizations (bubbles) expand continuously and can eventually dominate the entire screen if not 'popped' (addressed). 
-This mirrors the hypothesized behavior of highly aggressive and expansive alien civilizations that might rapidly spread across the galaxy, overtaking other civilizations and becoming the dominant force in their vicinity.
+    Each bubble in this game stands in for an expanding process, the kind
+    described in Robin Hanson's "grabby aliens" hypothesis in astrobiology:
+    a civilization, or here a single growing claim on the screen, that
+    does not slow itself down. Left alone, a bubble's radius increases at
+    a constant rate every frame, indifferent to what else is happening
+    around it, indifferent to how many other bubbles are also growing,
+    indifferent to whether the player is watching it or one of the others.
+    Growth here carries no internal brake. The only thing that stops a
+    bubble is an external act, the player typing its word correctly and
+    popping it, which is a way of saying that in this toy model, expansion
+    is default and containment is the thing that has to be earned through
+    attention and correct action.
+
+    This maps onto the "grabby" half of Hanson's dichotomy specifically.
+    Hanson contrasts grabby civilizations, which expand rapidly, visibly,
+    and irreversibly, with quiet ones, which either never expand past
+    their home system or expand slowly enough, and covertly enough, that
+    an outside observer would be unlikely to notice them at all before
+    they arrive. A grabby civilization is loud by construction: it is
+    only inferable from the outside because it changes the volume of
+    space it occupies fast enough to leave a detectable trace. The bubbles
+    in this game are grabby in exactly that sense. Nothing here is a
+    quiet, deniable process; every bubble broadcasts its own existence and
+    its own rate of expansion continuously, on the screen, in front of the
+    player, by design. There is no failure mode in this model where a
+    bubble expands and nobody notices. The whole mechanic assumes full
+    visibility and asks whether the player can act on that visibility
+    fast enough.
+
+    The vocabulary populating the bubbles is drawn from predictive coding,
+    active inference, and free energy principle literature: precision
+    weighting, Markov blanket, homeostasis, prediction error minimization,
+    and so on. This is not incidental set dressing. Predictive coding
+    treats a cognitive system as one that is constantly generating
+    predictions about its sensory stream and updating either its model or
+    its actions to minimize the mismatch, the prediction error, between
+    what it expected and what it received. An unaddressed prediction
+    error is structurally similar to an unaddressed bubble: both are a
+    live discrepancy that, left untouched, does not resolve itself and
+    does not shrink on its own. Some formulations of active inference
+    describe the organism as acting specifically to keep its own model's
+    surprise, its free energy, bounded within a survivable range, the
+    same way the player here is not trying to eliminate every bubble
+    permanently, only to keep the total field of active bubbles inside
+    the boundary of the screen. The game's failure condition, a bubble
+    growing past the edge of the canvas, is a crude but legible analogue
+    of an organism's model failing to contain its own error, of precision
+    weighting failing to keep pace with the rate at which discrepancy
+    accumulates.
+
+    There is a second, more ecological reading available as well, closer
+    to Hanson's own framing of expansion under resource constraint than to
+    the cognitive-science vocabulary populating the bubbles. In Hanson's
+    model, expansion is not itself pathological; it becomes a problem for
+    an observer, or for a neighboring civilization, only once it starts
+    consuming a shared resource, physical volume, available matter, or in
+    this game's case, canvas area, that other agents also depend on. A
+    single bubble expanding on an otherwise empty screen is not
+    threatening. It becomes threatening only in the presence of a finite
+    boundary and, implicitly, of other bubbles competing for the same
+    finite space. This is the same logistic-growth logic behind carrying
+    capacity in ecology: nothing expands without limit, because
+    everything either meets its own resource ceiling or collides with
+    another agent's claim on the same resource first. The typing
+    mechanic is, in this reading, a stand-in for exactly the kind of
+    external constraint, another agent, competition, an environmental
+    ceiling, that keeps any single expanding process from running away
+    unchecked. The player is not outside the ecology being modeled. The
+    player is the check the ecology needs in order to remain an ecology
+    rather than a single winner-take-all bubble consuming the entire
+    screen.
+
+    None of this requires reading the game as a serious model of anything
+    beyond itself, and it should not be read as such. It is a small,
+    campy vocabulary drill wearing a science-fiction skin, in keeping
+    with a long tradition of exactly that kind of borrowing, from
+    Pinky and the Brain's nightly failed plots to Hanson's own
+    admittedly speculative and provocative public writing on grabby
+    civilizations. The concept note exists to make explicit what the
+    mechanic is quietly already doing: using unchecked growth as a
+    simple, visually legible proxy for the cost of inattention, whether
+    that inattention is a player's, a cognitive system's, or a
+    civilization's, and using the act of typing correctly, precisely,
+    under time pressure, as a simple proxy for the cost of the attention
+    that keeps growth from becoming domination.
 -->
 </body>
 </html>
